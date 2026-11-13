@@ -149,6 +149,14 @@ body:before{opacity:.25!important}
 /* Higher-resolution pre-rendered asset with original reference as fallback. */
 #eyes:after{background-image:url("./ronova-eye-hd.webp"),url("./ronova-eyes.jpg")!important;background-size:cover,cover!important;background-position:center center,center center!important;background-repeat:no-repeat!important;filter:none!important;mask-image:none!important}
 @media(max-width:700px){#eyes:after{background-size:cover,cover!important}}
+
+/* Sharp, scalable Ronova background; replaces the 200px compressed image. */
+#eyes:after{display:none!important}
+#eyes{background:radial-gradient(ellipse at 50% 80%,#641c20 0%,#29080d 56%,#110208 100%)!important}
+#ronova-hd-eyes{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;opacity:1;filter:none;image-rendering:auto}
+#ronova-hd-eyes .iris{animation:ronovaIris 8s ease-in-out infinite alternate}
+@keyframes ronovaIris{from{opacity:.85}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#ronova-hd-eyes .iris{animation:none}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -332,5 +340,30 @@ openPuzzle=function(word){
   document.getElementById('clue').after(div);
  }else document.getElementById('pigpen-puzzle')?.remove();
 };
+})();
+
+/* Resolution-independent eye artwork with reference-based placement. */
+(function(){
+const container=document.getElementById('eyes');if(!container)return;
+let existing=container.querySelector('#ronova-hd-eyes');if(existing)existing.remove();
+const NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
+svg.id='ronova-hd-eyes';svg.setAttribute('viewBox','0 0 1536 864');svg.setAttribute('preserveAspectRatio','xMidYMid slice');svg.setAttribute('aria-hidden','true');
+svg.innerHTML='<defs><radialGradient id="eyeCore"><stop stop-color="#fff1cc"/><stop offset=".10" stop-color="#ffc1a2"/><stop offset=".22" stop-color="#e65b48"/><stop offset=".48" stop-color="#812329"/><stop offset=".74" stop-color="#381017"/><stop offset="1" stop-color="#12040a"/></radialGradient><linearGradient id="eyeLid" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#ffb3a0"/><stop offset=".32" stop-color="#e44d49"/><stop offset="1" stop-color="#69131e"/></linearGradient><radialGradient id="eyeMist"><stop stop-color="#ed5b5b" stop-opacity=".2"/><stop offset="1" stop-color="#a31425" stop-opacity="0"/></radialGradient></defs>';
+const eyes=[
+[770,250,435,175,-2,1],[270,129,295,120,10,.75],[1230,270,250,115,-14,.8],[110,480,255,110,3,.8],[352,380,112,62,5,.65],[985,397,150,75,-12,.72],[1175,450,120,63,-8,.65],[1175,84,148,85,-24,.7],[14,205,130,80,18,.5],
+[530,87,175,65,18,.32],[1050,155,150,60,-9,.25],[1385,137,175,70,-19,.2]];
+eyes.forEach(([x,y,w,hh,rot,opacity],i)=>{
+ const group=document.createElementNS(NS,'g');group.setAttribute('transform','translate('+x+' '+y+') rotate('+rot+') scale('+(w/230)+' '+(hh/112)+')');group.setAttribute('opacity',opacity);
+ group.innerHTML='<ellipse cx="0" cy="0" rx="153" ry="76" fill="url(#eyeMist)"/>'
+ +'<path d="M-114 0 Q-64 -48 -16 -38 Q29 -48 67 -23 Q91 -16 115 -29 Q80 22 36 36 Q-29 54 -72 23 Q-94 9 -114 0Z" fill="#27080d" stroke="#6d1820" stroke-width="1.5"/>'
+ +'<path d="M-112 -3 Q-60 -40 -12 -36 Q32 -44 72 -20 Q96 -13 114 -30" fill="none" stroke="url(#eyeLid)" stroke-width="5" stroke-linecap="round"/>'
+ +'<path d="M-113 2 Q-65 39 -14 38 Q38 47 113 -28" fill="none" stroke="#bb393c" stroke-width="3" stroke-linecap="round"/>'
+ +'<ellipse class="iris" cx="0" cy="-2" rx="26" ry="36" fill="url(#eyeCore)"/>'
+ +'<ellipse cx="0" cy="-2" rx="12" ry="23" fill="#3d0a12" opacity=".9"/>'
+ +'<circle cx="2" cy="0" r="5" fill="#ffe3c9"/>'
+ +'<path d="M-65 -35 Q-83 -49 -104 -52 M-34 -41 Q-52 -66 -65 -74 M-4 -40 Q-7 -66 -18 -79 M39 -33 Q54 -60 77 -71 M-37 38 Q-45 59 -61 70 M15 39 Q24 62 38 73" fill="none" stroke="#a63838" stroke-width="2" opacity=".85"/>';
+ svg.append(group);
+});
+container.append(svg);
 })();
 </script></body></html>
