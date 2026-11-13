@@ -188,6 +188,14 @@ body:before{opacity:.25!important}
 #ronova-admin-dialog button{padding:10px 12px;margin:5px 4px;background:#351120;color:#ffe2e3;border:1px solid #934258;border-radius:8px;cursor:pointer}
 #ronova-admin-dialog p{line-height:1.5}
 #ronova-admin-dialog .admin-actions{display:flex;flex-wrap:wrap}
+
+#ronova-ost-player{position:fixed;right:12px;bottom:65px;z-index:19;width:min(92vw,355px);padding:12px;background:#140812f4;border:1px solid #9d4358;border-radius:12px;color:#f7c3c8;box-shadow:0 12px 42px #000a}
+#ronova-ost-player[hidden]{display:none!important}
+.ronova-ost-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;font:14px Georgia,serif}
+#ronova-ost-close{border:0;background:transparent;color:#ffe2e5;font-size:24px;cursor:pointer}
+#ronova-ost-frame{width:100%;aspect-ratio:16/9;background:#090409;border-radius:6px;overflow:hidden}
+#ronova-ost-frame iframe{display:block;width:100%;height:100%;border:0}
+#ronova-ost-player p{font-size:11px;line-height:1.4;margin:8px 0 0;color:#d6b1bd}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -334,7 +342,28 @@ function startSound(){
 }
 function stopSound(){if(master&&ctx){master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,.2);const old=voices;setTimeout(()=>old.forEach(o=>{try{o.stop()}catch(e){}}),900);voices=[];master=null}}
 const button=document.getElementById('ronova-sound');
-button.onclick=()=>{playing=!playing;if(playing)startSound();else stopSound();button.textContent=playing?'♫ Атмосфера: вкл.':'♫ Атмосфера: выкл.';button.setAttribute('aria-pressed',String(playing))};
+button.textContent='♫ O Mors: включить';
+button.title='Официальная композиция HOYO-MiX через встроенный YouTube-плеер';
+button.setAttribute('aria-label','Включить или выключить O Mors');
+const musicBox=document.createElement('div');
+musicBox.id='ronova-ost-player';
+musicBox.setAttribute('aria-label','Официальный плеер O Mors от HOYO-MiX');
+musicBox.hidden=true;
+musicBox.innerHTML='<div class="ronova-ost-header"><span>HOYO-MiX · O Mors</span><button id="ronova-ost-close" type="button" aria-label="Закрыть проигрыватель">×</button></div><div id="ronova-ost-frame"></div><p>Официальная запись HOYO-MiX. Для воспроизведения нажми Play в плеере, если браузер заблокировал автозапуск.</p>';
+document.body.append(musicBox);
+let ostPlaying=false;
+function setOst(enabled){
+ ostPlaying=enabled;
+ musicBox.hidden=!enabled;
+ button.textContent=enabled?'♫ O Mors: выключить':'♫ O Mors: включить';
+ button.setAttribute('aria-pressed',String(enabled));
+ const host=document.getElementById('ronova-ost-frame');
+ if(enabled){
+  host.innerHTML='<iframe title="O Mors — HOYO-MiX (официальная запись)" src="https://www.youtube-nocookie.com/embed/Q-88qnPNWPI?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" loading="eager" allowfullscreen></iframe>';
+ }else host.replaceChildren();
+}
+button.onclick=()=>setOst(!ostPlaying);
+document.getElementById('ronova-ost-close').onclick=()=>setOst(false);
 document.getElementById('ronova-effects').onclick=e=>{fx=!fx;document.getElementById('ronova-atmosphere').style.display=fx?'':'none';dust.style.display=fx?'':'none';e.currentTarget.setAttribute('aria-pressed',String(fx));e.currentTarget.textContent=fx?'✧ Эффекты':'✧ Без эффектов'};
 document.addEventListener('visibilitychange',()=>{if(ctx){if(document.hidden)ctx.suspend();else if(playing)ctx.resume()}});
 })();
