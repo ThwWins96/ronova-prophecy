@@ -73,6 +73,12 @@ main{z-index:2}
 #eyes{overflow:hidden!important}
 .eye{transform-origin:center!important}
 @media(max-width:700px){#eyes{width:100vw;height:100vh}.eye{min-width:90px!important}}
+
+/* Original reference image replaces all synthetic SVG eyes. */
+#eyes{z-index:0!important;opacity:1!important;mix-blend-mode:normal!important;mask-image:none!important;filter:none!important;background:transparent!important}
+#eyes .eye,#eyes:before{display:none!important}
+#eyes:after{content:"";position:absolute;inset:0;background-image:url("./ronova-eyes.jpg");background-repeat:no-repeat;background-position:center top;background-size:max(115vw,115vh * 1.78) auto;opacity:.94;mask-image:linear-gradient(to bottom,#000 0%,#000 57%,transparent 95%);filter:saturate(1.16) contrast(1.12) drop-shadow(0 0 14px #b83236)}
+@media(max-width:700px){#eyes:after{background-size:auto 76vh;background-position:center -2vh;mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 88%)}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
