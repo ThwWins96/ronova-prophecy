@@ -157,6 +157,12 @@ body:before{opacity:.25!important}
 #ronova-hd-eyes .iris{animation:ronovaIris 8s ease-in-out infinite alternate}
 @keyframes ronovaIris{from{opacity:.85}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#ronova-hd-eyes .iris{animation:none}}
+
+/* Final: use the genuine Genshin Impact frame, not a synthetic vector reconstruction. */
+#ronova-hd-eyes{display:none!important}
+#eyes{background:#14030a!important}
+#eyes:after{display:block!important;content:"";position:absolute;inset:0;background-image:url("./ronova-original.png"),url("https://upload-os-bbs.hoyolab.com/upload/2025/01/16/13089070/701b05b3520d07f32f7b32f2d48fe6df_7742415626530478595.png")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;filter:none!important;mask-image:none!important;opacity:1!important;transform:none!important}
+#ronova-atmosphere{opacity:.12!important}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
