@@ -168,6 +168,10 @@ body:before{opacity:.25!important}
 .clock{display:block!important;position:relative!important;left:auto!important;right:auto!important;transform:none!important;align-self:center!important;flex:0 0 auto!important;width:min(96vw,590px)!important;aspect-ratio:590/420!important;margin:0 auto 8px!important}
 .clock .ronova-clock-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;overflow:visible!important}
 #ronova-hour-rotor,#ronova-minute-rotor{transition:none!important;animation:none!important}
+
+/* 4K Ronova eye wallpaper, served from its original image host */
+#eyes:after{display:block!important;content:"";position:absolute;inset:0;background-image:url("https://images6.alphacoders.com/139/1398370.png"),url("./ronova-eyes.jpg")!important;background-size:cover,cover!important;background-position:center center,center center!important;background-repeat:no-repeat!important;filter:none!important;opacity:1!important;mask-image:none!important}
+#ronova-hd-eyes{display:none!important}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -385,5 +389,30 @@ eyes.forEach(([x,y,w,hh,rot,opacity],i)=>{
  svg.append(group);
 });
 container.append(svg);
+})();
+
+/* Actual wall clock: local device time, no fake animation or fixed countdown angle. */
+(function(){
+const clock=document.getElementById('clock');
+if(!clock)return;
+const svg=clock.querySelector('.ronova-clock-svg');
+if(!svg)return;
+const minute=svg.querySelector('#ronova-minute-rotor'),hour=svg.querySelector('#ronova-hour-rotor');
+if(!minute||!hour)return;
+// Remove earlier interval updates by moving the rotors to fresh clones.
+const m=minute.cloneNode(true),hr=hour.cloneNode(true);
+minute.replaceWith(m);hour.replaceWith(hr);
+m.id='ronova-real-minute';hr.id='ronova-real-hour';
+function sync(){
+ const d=new Date();
+ const seconds=d.getSeconds()+d.getMilliseconds()/1000;
+ const minutes=d.getMinutes()+seconds/60;
+ const hours=d.getHours()%12+minutes/60;
+ // Original hands point diagonally at 38°; offset makes their position correspond to real clock numerals.
+ m.setAttribute('transform','rotate('+(minutes*6-128)+' 295 210)');
+ hr.setAttribute('transform','rotate('+(hours*30-128)+' 295 210)');
+ svg.setAttribute('aria-label','Часы Роновы: '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
+}
+sync();setInterval(sync,250);
 })();
 </script></body></html>
