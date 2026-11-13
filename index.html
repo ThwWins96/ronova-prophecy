@@ -113,7 +113,7 @@ body:before{background:radial-gradient(ellipse at 50% 50%,transparent 0%,#040005
 /* Ronova / Genshin Impact art direction: crimson rift, six watchful eyes, funeral-dark violet */
 :root{--ronova-red:#f14850;--ronova-violet:#7c2559;--ronova-ivory:#f5d9c9}
 body{background:#09030a!important}
-#eyes:after{background-image:linear-gradient(180deg,#1702082e 0%,#23040a08 45%,#18040bbd 100%),url("./ronova-eye-hd.jpg")!important;background-size:cover!important;background-position:center top!important;filter:saturate(1.12) contrast(1.1)!important;mask-image:linear-gradient(#000 0%,#000 80%,transparent 100%)!important}
+#eyes:after{background-image:linear-gradient(180deg,#1702082e 0%,#23040a08 45%,#18040bbd 100%),url("./ronova-eye-hd.jpg"),url("./ronova-eyes.jpg")!important;background-size:cover,cover,cover!important;background-position:center top!important;filter:saturate(1.12) contrast(1.1)!important;mask-image:linear-gradient(#000 0%,#000 80%,transparent 100%)!important}
 #eyes:before{background:radial-gradient(ellipse at 50% 38%,transparent 10%,#11030a8a 75%)!important;opacity:1!important;display:block!important;z-index:1}
 #ronova-atmosphere{opacity:.48!important}
 #ronova-atmosphere:before{background:conic-gradient(from 0deg at 50% 32%,transparent 0deg,#8d112525 45deg,transparent 75deg,#5c134c33 120deg,transparent 180deg,#c51a2d26 260deg,transparent 300deg)!important}
@@ -124,7 +124,7 @@ h1{font-family:Georgia,serif!important;color:#f5d6d2!important;text-shadow:0 0 1
 .ronova-particle{background:#d84b65!important;box-shadow:0 0 10px 2px #ad2457!important}
 #ronova-controls{flex-wrap:wrap;max-width:min(95vw,420px);justify-content:flex-end}
 #ronova-controls a{background:#170713e6;color:#f7c3c8;border:1px solid #9d4358;border-radius:50px;padding:9px 12px;font:13px Georgia,serif;text-decoration:none;backdrop-filter:blur(8px)}
-@media(max-width:600px){#eyes:after{background-size:auto 100vh!important;background-position:center top!important}.prophecy{padding:15px!important}h1{margin-top:18px!important}}
+@media(max-width:600px){#eyes:after{background-size:auto 100vh,auto 100vh,auto 100vh!important;background-position:center top!important}.prophecy{padding:15px!important}h1{margin-top:18px!important}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
