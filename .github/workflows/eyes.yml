@@ -1,0 +1,23 @@
+name: Install exact Ronova eye artwork
+on:
+  push:
+    paths:
+      - '.github/workflows/eyes.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download original eye artwork
+        run: |
+          curl -fLsS --retry 3 'https://media.canva.com/v2/image-resize/format:JPG/height:112/quality:75/uri:ifs%3A%2F%2FM%2F9c15dc79-7108-4a5a-8db5-bc875cb5ee91/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAAz0vPnNzlMAqNzwS3g5p_oRHwT0GBBC8rrQZ9WLt1Un&exp=1794609037&osig=AAAAAAAAAAAAAAAAAAAAAMFSIEG7NuXlipuHLK_BzTMDWT2nbHR65M6Xjs0QaIvx&signer=media-rpc&token=AAIAAU0AJDljMTVkYzc5LTcxMDgtNGE1YS04ZGI1LWJjODc1Y2I1ZWU5MQAAAAABodcIvsgS-KEw_PHl-xXgDX1OB6Qfi9n9nf7-hnUIW1pO45BHng&x-canva-quality=thumbnail' -o ronova-eyes.jpg
+          test -s ronova-eyes.jpg
+      - name: Commit image asset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ronova-eyes.jpg
+          git diff --cached --quiet || (git commit -m "Add original Ronova eyes reference artwork" && git push)
