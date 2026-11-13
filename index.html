@@ -68,6 +68,11 @@ main{z-index:2}
 .eye:nth-child(n+2) svg{filter:drop-shadow(0 0 5px #a32b26)}
 .eye .eye-glow{filter:blur(6px)}
 @media(min-width:850px){#eyes{background-size:cover}}
+
+/* Larger, denser constellation based on the eye reference */
+#eyes{overflow:hidden!important}
+.eye{transform-origin:center!important}
+@media(max-width:700px){#eyes{width:100vw;height:100vh}.eye{min-width:90px!important}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -140,4 +145,13 @@ const eyeLayout=[
 const eyeMarkup=(i,hero)=>'<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="r'+i+'"><stop stop-color="#fff4df"/><stop offset=".1" stop-color="#ffb98b"/><stop offset=".21" stop-color="#ee634b"/><stop offset=".45" stop-color="#8d2425"/><stop offset=".72" stop-color="#41101a"/><stop offset="1" stop-color="#21040c"/></radialGradient><radialGradient id="a'+i+'"><stop stop-color="#f35b4c" stop-opacity=".65"/><stop offset="1" stop-color="#f35b4c" stop-opacity="0"/></radialGradient></defs><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 Q181 70 146 78 Q110 '+(hero?'115':'91')+' 74 79 Q38 77 0 61Z" fill="url(#a'+i+')" class="eye-glow"/><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 Q181 70 146 78 Q110 '+(hero?'115':'91')+' 74 79 Q38 77 0 61Z" fill="#320b0d" opacity=".9"/><ellipse cx="110" cy="57" rx="'+(hero?39:25)+'" ry="'+(hero?45:25)+'" fill="url(#r'+i+')"/><ellipse cx="110" cy="57" rx="'+(hero?22:12)+'" ry="'+(hero?30:15)+'" fill="#a6342c"/><circle cx="110" cy="57" r="'+(hero?7:4)+'" fill="#fff1d7"/><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 M0 61 Q38 77 74 79 Q110 '+(hero?'115':'91')+' 146 78 Q181 70 220 21" fill="none" stroke="#fb9b7c" stroke-width="'+(hero?3.6:2.4)+'"/><path d="M14 55 Q52 23 74 36 M150 37 Q190 45 211 22 M70 84 Q110 107 148 84" fill="none" stroke="#b93c32" stroke-width="1.4"/><path d="M96 21 L88 5 M113 18 L120 0 M137 30 L160 6 M82 85 L66 112 M121 92 L127 119" fill="none" stroke="#b83d37" stroke-width="1.5"/></svg>';
 const field=document.getElementById('eyes');field.innerHTML='';
 eyeLayout.forEach((p,i)=>{const e=document.createElement('div');e.className='eye';e.style.cssText='position:absolute;left:'+p.x+'%;top:'+p.y+'%;width:clamp('+(p.hero?110:38)+'px,'+(p.hero?28:12)+'vw,'+p.w+'px);height:auto;aspect-ratio:220/120;transform:translate(-50%,-50%) rotate('+p.rot+'deg)!important;';e.innerHTML=eyeMarkup(i,p.hero);field.append(e)});
+
+/* Eye sizes follow the relative proportions of the reference; scale up for impact. */
+document.querySelectorAll('#eyes .eye').forEach((e,i)=>{
+ const sizes=[380,200,195,235,150,160,165,170,145];
+ const widths=[53,28,27,33,21,23,23,24,21];
+ e.style.width='clamp('+Math.round(sizes[i]*.55)+'px,'+widths[i]+'vw,'+sizes[i]+'px)';
+ e.style.maxWidth='none';
+ e.style.opacity=i===0?'1':'.95';
+});
 </script></body></html>
