@@ -1,0 +1,28 @@
+name: Fetch original Ronova frame
+on:
+  push:
+    paths:
+      - '.github/workflows/ronova-original.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download unresized original HoYoLAB frame
+        run: |
+          curl -fL --retry 4 --connect-timeout 20 -A 'Mozilla/5.0' 'https://upload-os-bbs.hoyolab.com/upload/2025/01/16/13089070/701b05b3520d07f32f7b32f2d48fe6df_7742415626530478595.png' -o ronova-original.png
+          file ronova-original.png
+          test "$(wc -c < ronova-original.png)" -gt 60000
+      - name: Save image to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ronova-original.png
+          if ! git diff --cached --quiet; then
+            git commit -m "Add original full-quality Ronova screenshot"
+            git pull --rebase
+            git push
+          fi
