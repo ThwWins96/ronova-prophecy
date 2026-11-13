@@ -196,6 +196,17 @@ body:before{opacity:.25!important}
 #ronova-ost-frame{width:100%;aspect-ratio:16/9;background:#090409;border-radius:6px;overflow:hidden}
 #ronova-ost-frame iframe{display:block;width:100%;height:100%;border:0}
 #ronova-ost-player p{font-size:11px;line-height:1.4;margin:8px 0 0;color:#d6b1bd}
+
+/* Mobile-safe OST controls: keep YouTube player from covering the puzzle. */
+#ronova-ost-player{position:fixed!important;right:8px!important;bottom:54px!important;width:190px!important;max-width:calc(100vw - 16px)!important;padding:7px!important;max-height:150px!important;overflow:hidden!important;z-index:19!important}
+#ronova-ost-frame{height:107px!important;aspect-ratio:16/9!important}
+#ronova-ost-player p{display:none!important}
+#ronova-ost-player .ronova-ost-header{font-size:11px!important;margin-bottom:4px!important}
+@media(max-width:600px){
+ #ronova-ost-player{right:6px!important;bottom:57px!important;width:150px!important;max-height:120px!important;padding:5px!important}
+ #ronova-ost-frame{height:84px!important}
+ #ronova-ost-player .ronova-ost-header{font-size:10px!important}
+}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
