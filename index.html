@@ -10,6 +10,35 @@ main{position:relative;z-index:2;max-width:1100px;min-height:100vh;margin:auto;p
 .prophecy{font-size:clamp(21px,3vw,33px);line-height:2.3;max-width:950px;color:#e7c9bd}.word{display:inline-block;margin:0 .12em;vertical-align:middle}.secret{background:transparent;border:0;cursor:pointer;padding:4px 7px;color:#c9a16d;vertical-align:middle;border-bottom:1px solid #9b5647;filter:drop-shadow(0 0 5px #e74b3d);transition:transform .2s}.secret:hover,.secret:focus-visible{transform:translateY(-3px);outline:1px solid #c97a65}.glyph{display:inline-block;width:22px;height:31px;object-fit:contain;vertical-align:middle}.fallback{font-family:serif;font-size:23px;color:#c9a16d}
 .note{font-size:13px;letter-spacing:.12em;color:#c69a96;margin-top:30px}dialog{border:1px solid #8b3642;background:linear-gradient(135deg,#210912,#0b060e);color:#f8dcd5;border-radius:12px;width:min(92vw,500px);padding:28px;box-shadow:0 0 65px #ae172f88}dialog::backdrop{background:#000b;backdrop-filter:blur(6px)}dialog h2{color:#f39b8c;margin:0 0 15px}dialog p{line-height:1.7;overflow-wrap:anywhere}input{background:#120910;border:1px solid #9b4451;color:white;border-radius:6px;font:18px Georgia;padding:13px;width:100%;margin:12px 0}button.action{border:1px solid #a94750;background:#521621;color:#ffe2d9;padding:12px 22px;border-radius:7px;cursor:pointer}.close{float:right;background:none;color:#f5b2ac;border:0;font-size:26px;cursor:pointer}.error{color:#ff8888;min-height:22px}.expired{position:fixed;inset:0;background:#070305;z-index:10;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center}.expired h2{color:#fa5555;font-size:clamp(35px,8vw,70px);font-weight:normal}
 @media(prefers-reduced-motion:reduce){.eye{animation:none}}
+
+/* Ronova visual overhaul */
+body{background:radial-gradient(ellipse at 50% 78%,#67272c 0%,#29070d 42%,#0c0207 76%,#050104 100%);background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#ff7b7910 4px 5px),radial-gradient(ellipse at 50% 20%,transparent 12%,#09000599 85%);z-index:1}
+#eyes{opacity:1;filter:contrast(1.2);mask-image:linear-gradient(#000 0%,#000 68%,transparent 100%)}
+.eye{border:0!important;border-radius:0!important;box-shadow:none!important;background:none!important;animation:ronovaBlink 11s ease-in-out infinite!important;transform:rotate(var(--r));height:calc(var(--w)*.55)!important;filter:drop-shadow(0 0 10px #ef4e3f)}
+.eye:before{display:none!important}
+.eye svg{width:100%;height:100%;overflow:visible}
+@keyframes ronovaBlink{0%,89%,100%{transform:rotate(var(--r)) scaleY(1)}92%{transform:rotate(var(--r)) scaleY(.08)}95%{transform:rotate(var(--r)) scaleY(1)}}
+main{padding-top:15px}
+.clock{width:min(70vw,320px)!important;height:min(70vw,320px)!important;margin:8px auto 14px!important;border:none!important;border-radius:50%;background:radial-gradient(circle at center,#05020b 0 36%,#23040e 48%,transparent 71%)!important;box-shadow:none!important;filter:drop-shadow(0 0 17px #f01632)}
+.clock:before{content:"";position:absolute;inset:12%;border:3px solid #e02336;border-radius:50%;box-shadow:0 0 12px #f0283f,inset 0 0 23px #e5233855;opacity:.9}
+.clock:after{content:"";position:absolute;inset:-15%;border-radius:50%;background:repeating-conic-gradient(from 5deg,transparent 0 27deg,#9c0b2a 28deg,#ea173c 29deg,transparent 30deg);mask:radial-gradient(circle,transparent 0 54%,#000 57%,transparent 73%);opacity:.6;pointer-events:none;animation:rotateHalo 80s linear infinite}
+@keyframes rotateHalo{to{transform:rotate(360deg)}}
+.clock span{font-size:clamp(17px,4.3vw,28px)!important;font-weight:bold;color:#ed253f!important;text-shadow:0 0 7px #ff1c35,0 0 19px #e01b36!important;transform:translate(-50%,-50%) rotate(calc(var(--i)*30deg)) translateY(calc(min(70vw,320px)*-.39)) rotate(calc(var(--i)*-30deg))!important}
+.clock .hand{z-index:3;background:linear-gradient(90deg,#7b1025,#ff3951,#78041a)!important;clip-path:polygon(50% 0,100% 15%,68% 100%,32% 100%,0 15%);box-shadow:none!important}
+.clock .hand.hour{height:25%!important;width:12px!important;left:calc(50% - 6px)!important}
+.clock .hand.minute{height:39%!important;width:7px!important;left:calc(50% - 3.5px)!important}
+.clock .center{z-index:4;background:#ffb5a0!important;box-shadow:0 0 7px #fff,0 0 25px #f22!important}
+.clock .sigil{position:absolute;inset:33%;width:34%;height:34%;opacity:.85;pointer-events:none;filter:drop-shadow(0 0 5px #fb3448)}
+.timer{font-size:clamp(17px,4vw,25px);letter-spacing:.28em;color:#ff777b}
+h1{margin:24px 0 26px;font-family:Georgia,serif;font-size:clamp(29px,6vw,62px);letter-spacing:.11em;color:#ffdfd4;text-shadow:0 0 7px #ff3e48,0 0 22px #e01e39,0 0 55px #b61230}
+.prophecy{background:linear-gradient(135deg,#17060dbd,#1b0810cc);padding:clamp(18px,4vw,45px);border:1px solid #9d394460;box-shadow:0 0 55px #060006a8,inset 0 0 38px #7a142012;border-radius:6px;line-height:2.2}
+.secret{border-bottom:1px solid #b88b57;filter:drop-shadow(0 0 5px #e9a25e);padding:4px 3px}
+.ronova-rune{height:1.1em;width:.76em;vertical-align:-.12em;overflow:visible;margin:0 .01em}
+.ronova-rune path,.ronova-rune circle{stroke:#c4a16a;stroke-width:3.2;fill:none;stroke-linejoin:round;stroke-linecap:round}
+.ronova-rune .filled{fill:#c4a16a;stroke:none}
+.note{color:#b18a83}
+dialog{border-color:#b34a4b;box-shadow:0 0 60px #b41432a0}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -46,5 +75,15 @@ const roman=['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];roma
 function tick(){let remaining=Math.max(0,7200000-(Date.now()-started)),s=Math.ceil(remaining/1000);document.getElementById('timer').textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');document.getElementById('minute').style.transform='rotate('+((7200000-remaining)/7200000*720)+'deg)';document.getElementById('hour').style.transform='rotate('+((7200000-remaining)/7200000*60)+'deg)';if(!remaining){dialog.close();document.getElementById('expired').style.display='flex'}}tick();setInterval(tick,1000);
 const eyePositions=[[4,12,125,-15],[28,8,100,12],[68,8,125,-20],[86,20,140,10],[8,46,170,10],[72,42,95,-14],[89,57,130,20],[22,76,105,-18],[60,78,145,10],[44,26,250,-5],[2,85,85,10],[79,85,110,-10]];
 const eyes=document.getElementById('eyes');eyePositions.forEach(([x,y,w,r],i)=>{let e=document.createElement('div');e.className='eye';e.style.cssText='left:'+x+'%;top:'+y+'%;--w:'+w+'px;--r:'+r+'deg;--d:'+(i*.7)+'s';eyes.append(e)});
+render();
+
+const eyeSVG='<svg viewBox="0 0 240 125" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="iris"><stop offset="0" stop-color="#ffe8ba"/><stop offset=".1" stop-color="#ff7860"/><stop offset=".25" stop-color="#1b0307"/><stop offset=".55" stop-color="#b82b28"/><stop offset="1" stop-color="#260308"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="4"/></filter></defs><path d="M2 65 Q55 8 116 37 Q174 56 237 19 Q179 87 117 94 Q58 99 2 65Z" fill="#b72c29" opacity=".35" filter="url(#glow)"/><path d="M2 65 Q55 8 116 37 Q174 56 237 19 M2 65 Q55 115 116 94 Q174 95 237 19" stroke="#f96d57" stroke-width="3.5" fill="none"/><path d="M12 51 Q54 11 92 29 M151 40 Q193 55 230 18 M28 80 Q73 115 123 100" stroke="#b83c35" stroke-width="1.5" fill="none"/><ellipse cx="118" cy="64" rx="38" ry="34" fill="url(#iris)"/><ellipse cx="118" cy="64" rx="12" ry="19" fill="#1c0308"/><circle cx="119" cy="62" r="4" fill="#ffe1c4"/><path d="M68 18 Q85 25 98 34 M107 12 Q114 23 115 29 M140 9 Q135 26 133 32 M157 25 Q149 32 145 35 M85 98 Q99 110 102 122 M121 99 L122 124 M144 95 Q151 108 158 119" stroke="#b63b32" stroke-width="2" fill="none"/></svg>';
+document.querySelectorAll('.eye').forEach((el,i)=>{el.innerHTML=eyeSVG.replaceAll('id="iris"','id="iris'+i+'"').replaceAll('url(#iris)','url(#iris'+i+')').replaceAll('id="glow"','id="glow'+i+'"').replaceAll('url(#glow)','url(#glow'+i+')')});
+const sigil=document.createElementNS('http://www.w3.org/2000/svg','svg');sigil.setAttribute('viewBox','0 0 100 100');sigil.classList.add('sigil');sigil.innerHTML='<g fill="none" stroke="#f5223b" stroke-width="2.5"><path d="M10 65 Q25 28 55 38 Q75 42 90 65 Q64 75 44 64 Q24 53 10 65Z"/><path d="M18 45 Q34 12 57 24 Q70 30 82 40 M34 73 Q54 87 76 68 M53 14 L60 36 L83 44 M32 43 L20 18 M69 64 L94 93"/><circle cx="53" cy="55" r="12"/><circle cx="53" cy="55" r="4" fill="#f5223b"/></g>';document.getElementById('clock').append(sigil);
+const runePaths=[
+'M5 29 L14 4 L24 29 M9 19 L20 19','M5 4 L5 30 M5 4 Q27 1 20 13 Q27 25 5 20 M5 20 Q29 19 21 30 L5 30','M24 5 Q8 0 7 16 Q5 31 24 29 M15 4 L19 10 L13 14','M6 4 L6 30 Q28 27 25 15 Q22 3 6 4 M12 11 L22 21','M23 4 L7 4 L7 30 L23 30 M7 17 L20 17','M23 4 L7 4 L7 30 M7 17 L19 17','M24 10 Q8 -1 5 16 Q6 32 23 29 L23 18 L15 18 M12 6 L18 11','M6 4 L6 30 M23 4 L23 30 M6 17 L23 17','M10 5 L20 5 M15 5 L15 30 M10 30 L20 30','M23 4 L23 23 Q22 33 6 28 M15 4 L26 4','M6 4 L6 30 M24 4 L8 18 L25 30 M13 15 L23 4','M6 4 L6 30 L24 30','M4 30 L8 4 L15 17 L22 4 L26 30','M6 30 L6 4 L24 30 L24 4','M15 3 Q28 5 27 17 Q26 31 15 31 Q2 29 3 17 Q4 5 15 3 M9 17 Q15 10 21 17 Q15 24 9 17','M6 30 L6 4 Q28 0 26 14 Q24 24 6 20','M15 3 Q28 5 27 17 Q26 31 15 31 Q2 29 3 17 Q4 5 15 3 M18 24 L27 32','M6 30 L6 4 Q27 0 25 14 Q22 23 6 20 M15 20 L26 30','M25 6 Q6 0 6 12 Q7 17 17 17 Q30 22 21 30 Q13 34 5 27','M4 4 L26 4 M15 4 L15 30','M6 4 L6 22 Q6 34 15 30 Q24 34 24 22 L24 4','M4 4 L15 30 L26 4','M3 4 L8 30 L15 15 L22 30 L27 4','M5 4 L25 30 M25 4 L5 30','M5 4 L15 17 L25 4 M15 17 L15 30','M5 4 L25 4 L5 30 L25 30'];
+const cyr='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+function runeSvg(ch){let i=cyr.indexOf(ch.toLowerCase());if(i<0)i=0;let path=runePaths[i%26];return '<svg class="ronova-rune" viewBox="0 0 30 35" aria-hidden="true"><path d="'+path+'"/><circle class="filled" cx="'+(i%3===0?25:5)+'" cy="'+(i%2===0?8:27)+'" r="2.2"/></svg>'}
+symbols=function(w){return [...w].map(runeSvg).join('')};
 render();
 </script></body></html>
