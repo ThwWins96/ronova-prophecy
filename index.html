@@ -145,6 +145,10 @@ body:before{opacity:.25!important}
 .pigpen-key-item svg{width:27px;height:27px}
 .pigpen-hint{font-size:13px;color:#caa9b3;line-height:1.45}
 @media(max-width:420px){.pigpen-cell{width:34px}.pigpen-cell svg{width:32px;height:32px}.pigpen-key{gap:3px}}
+
+/* Higher-resolution pre-rendered asset with original reference as fallback. */
+#eyes:after{background-image:url("./ronova-eye-hd.webp"),url("./ronova-eyes.jpg")!important;background-size:cover,cover!important;background-position:center center,center center!important;background-repeat:no-repeat!important;filter:none!important;mask-image:none!important}
+@media(max-width:700px){#eyes:after{background-size:cover,cover!important}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
