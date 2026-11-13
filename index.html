@@ -163,6 +163,11 @@ body:before{opacity:.25!important}
 #eyes{background:#14030a!important}
 #eyes:after{display:block!important;content:"";position:absolute;inset:0;background-image:url("./ronova-original.png"),url("https://upload-os-bbs.hoyolab.com/upload/2025/01/16/13089070/701b05b3520d07f32f7b32f2d48fe6df_7742415626530478595.png")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;filter:none!important;mask-image:none!important;opacity:1!important;transform:none!important}
 #ronova-atmosphere{opacity:.12!important}
+
+/* Clock alignment and visible, independently moving hands */
+.clock{display:block!important;position:relative!important;left:auto!important;right:auto!important;transform:none!important;align-self:center!important;flex:0 0 auto!important;width:min(96vw,590px)!important;aspect-ratio:590/420!important;margin:0 auto 8px!important}
+.clock .ronova-clock-svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;overflow:visible!important}
+#ronova-hour-rotor,#ronova-minute-rotor{transition:none!important;animation:none!important}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -249,7 +254,7 @@ document.querySelectorAll('#eyes .eye').forEach((e,i)=>{
 (function(){
 const old=document.querySelector('.ronova-clock-svg');if(old)old.remove();
 const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
-svg.setAttribute('viewBox','0 0 550 429');svg.setAttribute('aria-label','Анимированные часы Роновы');svg.classList.add('ronova-clock-svg');
+svg.setAttribute('viewBox','0 0 590 420');svg.setAttribute('aria-label','Анимированные часы Роновы');svg.classList.add('ronova-clock-svg');
 const cx=295,cy=210;
 let beams='',ticks='',numbers='';
 for(let i=0;i<12;i++){
@@ -277,8 +282,17 @@ svg.innerHTML='<defs><filter id="redglow" x="-100%" y="-100%" width="300%" heigh
 +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#f32639" filter="url(#redglow)"/>';
 document.getElementById('clock').prepend(svg);
 const begin=Number(localStorage.getItem('ronova-start-v1'))||Date.now();
-function animateClock(){const progress=Math.min(1,Math.max(0,(Date.now()-begin)/7200000));document.getElementById('ronova-minute-rotor').setAttribute('transform','rotate('+(progress*720)+' 295 210)');document.getElementById('ronova-hour-rotor').setAttribute('transform','rotate('+(progress*60)+' 295 210)')}
-animateClock();setInterval(animateClock,1000);
+function animateClock(){
+ const elapsed=Math.max(0,Date.now()-begin),progress=Math.min(1,elapsed/7200000);
+ const minute=document.getElementById('ronova-minute-rotor'),hour=document.getElementById('ronova-hour-rotor');
+ if(!minute||!hour)return;
+ // One full minute-hand revolution every 60 minutes, linked to the actual countdown.
+ const minuteAngle=(elapsed/60000*6)%360;
+ const hourAngle=(elapsed/3600000*30)%360;
+ minute.setAttribute('transform','rotate('+minuteAngle+' 295 210)');
+ hour.setAttribute('transform','rotate('+hourAngle+' 295 210)');
+}
+animateClock();setInterval(animateClock,250);
 })();
 /* Atmosphere, particles, and original synthesized ambient audio; user gesture required. */
 (function(){
