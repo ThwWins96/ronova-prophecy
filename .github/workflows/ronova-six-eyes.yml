@@ -1,0 +1,47 @@
+name: Download Ronova six-eye original
+on:
+  push:
+    paths:
+      - '.github/workflows/ronova-six-eyes.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Ronova Eye from Genshin Impact Wiki
+        run: |
+          python -m pip install --quiet pillow requests
+          python - <<'PY'
+          import requests
+          from PIL import Image
+          from io import BytesIO
+          from pathlib import Path
+          urls=[
+            'https://genshin-impact.fandom.com/wiki/Special:Redirect/file/Ronova_Eye.png',
+            'https://static.wikia.nocookie.net/gensin-impact/images/7/7f/Ronova_Eye.png/revision/latest?cb=20250101000000',
+          ]
+          for url in urls:
+            try:
+              r=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=35)
+              r.raise_for_status()
+              im=Image.open(BytesIO(r.content)).convert('RGB')
+              if im.width<900 or im.height<450:continue
+              im.save('ronova-eye-original.png',optimize=True)
+              print('Downloaded',im.size,'bytes',Path('ronova-eye-original.png').stat().st_size)
+              break
+            except Exception as exc: print('Source failed:',type(exc).__name__,str(exc)[:120])
+          else: raise SystemExit('No full-resolution Ronova Eye image available')
+          PY
+      - name: Commit original image
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ronova-eye-original.png
+          if ! git diff --cached --quiet; then
+            git commit -m "Add original six-eye Ronova scene"
+            git pull --rebase
+            git push
+          fi
