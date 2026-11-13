@@ -1,0 +1,28 @@
+name: Install HD Ronova eye background
+on:
+  push:
+    paths:
+      - '.github/workflows/ronova-hd.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download high resolution Ronova scene
+        run: |
+          curl -fL --retry 3 --connect-timeout 15 'https://assets.st-note.com/production/uploads/images/169237900/rectangle_large_type_2_2d965713733902253cf00d050cb733f5.jpeg?fit=bounds&height=2000&quality=85&width=2000' -o ronova-eye-hd.jpg
+          test "$(wc -c < ronova-eye-hd.jpg)" -gt 30000
+          file ronova-eye-hd.jpg
+      - name: Commit background
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ronova-eye-hd.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "Install HD Ronova eye backdrop"
+            git pull --rebase
+            git push
+          fi
