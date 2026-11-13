@@ -79,6 +79,11 @@ main{z-index:2}
 #eyes .eye,#eyes:before{display:none!important}
 #eyes:after{content:"";position:absolute;inset:0;background-image:url("./ronova-eyes.jpg");background-repeat:no-repeat;background-position:center top;background-size:max(115vw,205vh) auto;opacity:.94;mask-image:linear-gradient(to bottom,#000 0%,#000 57%,transparent 95%);filter:saturate(1.16) contrast(1.12) drop-shadow(0 0 14px #b83236)}
 @media(max-width:700px){#eyes:after{background-size:auto 76vh;background-position:center -2vh;mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 88%)}}
+
+/* Exact clock illustration, including the asymmetric hands, red Roman numerals and purple rays. */
+.clock{width:min(94vw,550px)!important;height:auto!important;aspect-ratio:550/429!important;border:0!important;border-radius:0!important;background:transparent url("./ronova-clock.png") center / contain no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 0 20px #9b153380)!important;margin:0 auto 6px!important}
+.clock:before,.clock:after,.clock .dial-art,.clock .sigil,.clock span,.clock .hand,.clock .center{display:none!important}
+@media(max-width:600px){.clock{width:min(100vw,550px)!important;margin-top:-5px!important}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
