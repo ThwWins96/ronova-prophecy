@@ -180,6 +180,14 @@ body:before{opacity:.25!important}
 /* Exact uploaded screenshot: local full-resolution file, no third-party image or reconstruction. */
 #eyes:after{display:block!important;content:"";position:absolute!important;inset:0!important;background-image:url("./1000116107(3).jpg")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;filter:none!important;mask-image:none!important;opacity:1!important;transform:none!important}
 #ronova-hd-eyes{display:none!important}
+
+#ronova-admin-button{position:fixed;left:12px;bottom:12px;z-index:20;border:1px solid #783544;border-radius:50%;background:#160812dd;color:#eac6cd;padding:10px 13px;cursor:pointer;font:14px Georgia,serif}
+#ronova-admin-dialog{border:1px solid #a5465a;border-radius:14px;background:#160912;color:#f5d9d3;padding:23px;width:min(92vw,420px);box-shadow:0 0 90px #000}
+#ronova-admin-dialog::backdrop{background:#080007bb;backdrop-filter:blur(5px)}
+#ronova-admin-dialog input{width:100%;padding:12px;background:#260f1c;color:#fff;border:1px solid #8b4355;border-radius:8px;margin:10px 0}
+#ronova-admin-dialog button{padding:10px 12px;margin:5px 4px;background:#351120;color:#ffe2e3;border:1px solid #934258;border-radius:8px;cursor:pointer}
+#ronova-admin-dialog p{line-height:1.5}
+#ronova-admin-dialog .admin-actions{display:flex;flex-wrap:wrap}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -312,7 +320,7 @@ document.body.insertAdjacentHTML('afterbegin','<div id="ronova-atmosphere" aria-
 const dust=document.getElementById('ronova-particles');
 for(let i=0;i<24;i++){let p=document.createElement('span');p.className='ronova-particle';p.style.cssText='--x:'+((i*47.71)%100)+'%;--y:'+((i*29.17)%100)+'%;--s:'+(1+i%3)+'px;--t:'+(5+i%7)+'s;--d:'+(-i*.43)+'s;--dx:'+((i%2?1:-1)*(12+i%17))+'px';dust.append(p)}
 const controls=document.createElement('div');controls.id='ronova-controls';
-controls.innerHTML='<button type="button" id="ronova-sound" aria-pressed="false" title="Авторская атмосферная музыка">♫ Звук: выкл.</button><button type="button" id="ronova-effects" aria-pressed="true">✧ Эффекты</button>';
+controls.innerHTML='<button type="button" id="ronova-sound" aria-pressed="false" title="Авторская атмосферная музыка">♫ Атмосфера: выкл.</button><button type="button" id="ronova-effects" aria-pressed="true">✧ Эффекты</button>';
 document.body.append(controls);
 let ctx=null,master=null,voices=[],playing=false,fx=true;
 function startSound(){
@@ -326,7 +334,7 @@ function startSound(){
 }
 function stopSound(){if(master&&ctx){master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,.2);const old=voices;setTimeout(()=>old.forEach(o=>{try{o.stop()}catch(e){}}),900);voices=[];master=null}}
 const button=document.getElementById('ronova-sound');
-button.onclick=()=>{playing=!playing;if(playing)startSound();else stopSound();button.textContent=playing?'♫ Звук: вкл.':'♫ Звук: выкл.';button.setAttribute('aria-pressed',String(playing))};
+button.onclick=()=>{playing=!playing;if(playing)startSound();else stopSound();button.textContent=playing?'♫ Атмосфера: вкл.':'♫ Атмосфера: выкл.';button.setAttribute('aria-pressed',String(playing))};
 document.getElementById('ronova-effects').onclick=e=>{fx=!fx;document.getElementById('ronova-atmosphere').style.display=fx?'':'none';dust.style.display=fx?'':'none';e.currentTarget.setAttribute('aria-pressed',String(fx));e.currentTarget.textContent=fx?'✧ Эффекты':'✧ Без эффектов'};
 document.addEventListener('visibilitychange',()=>{if(ctx){if(document.hidden)ctx.suspend();else if(playing)ctx.resume()}});
 })();
@@ -339,7 +347,7 @@ const svg=document.querySelector('.ronova-clock-svg');if(svg){
  svg.append(petals);
 }
 const controls=document.getElementById('ronova-controls');
-if(controls&&!document.getElementById('ronova-music-link')){
+if(false&&controls&&!document.getElementById('ronova-music-link')){
  const link=document.createElement('a');link.id='ronova-music-link';link.href='https://www.youtube.com/results?search_query=Genshin+Impact+Ronova+O+Mors+OST';link.target='_blank';link.rel='noopener noreferrer';link.textContent='♫ Тема Роновы';link.title='Поиск музыкальной темы O Mors из Genshin Impact';controls.append(link);
 }
 const sound=document.getElementById('ronova-sound');if(sound){sound.title='Авторский эмбиент, не оригинальная музыка Genshin Impact'}
@@ -422,5 +430,48 @@ function sync(){
  svg.setAttribute('aria-label','Часы Роновы: '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
 }
 sync();setInterval(sync,250);
+})();
+
+/* Password-gated timer administration. Browser-local, not server security. */
+(function(){
+ const admin=document.createElement('button');admin.id='ronova-admin-button';admin.type='button';admin.textContent='⚙ Часы';admin.setAttribute('aria-label','Настройки часов');
+ document.body.append(admin);
+ const panel=document.createElement('dialog');panel.id='ronova-admin-dialog';
+ panel.innerHTML='<h2>Настройки часов</h2><div id="ronova-admin-auth"><p>Введите пароль администратора</p><input id="ronova-admin-password" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль"><button id="ronova-admin-login" type="button">Открыть</button><p id="ronova-admin-error" role="alert"></p></div><div id="ronova-admin-settings" hidden><p>Длительность испытания, минуты</p><input id="ronova-admin-duration" type="number" min="1" max="1440" step="1" value="120"><div class="admin-actions"><button id="ronova-admin-apply" type="button">Применить и начать заново</button><button id="ronova-admin-pause" type="button">Пауза</button><button id="ronova-admin-reset" type="button">Сбросить отсчёт</button></div><p id="ronova-admin-state" aria-live="polite"></p></div><button id="ronova-admin-close" type="button">Закрыть</button>';
+ document.body.append(panel);
+ const $=id=>document.getElementById(id);
+ const durationKey='ronova-duration-v2',deadlineKey='ronova-deadline-v2',pausedKey='ronova-paused-remaining-v2';
+ let duration=Number(localStorage.getItem(durationKey))||120;
+ let deadline=Number(localStorage.getItem(deadlineKey));
+ let paused=Number(localStorage.getItem(pausedKey))||0;
+ if(!deadline&&!paused){deadline=started+duration*60000;localStorage.setItem(deadlineKey,String(deadline))}
+ function remaining(){return paused||Math.max(0,deadline-Date.now())}
+ function update(){
+  const rem=remaining(),seconds=Math.ceil(rem/1000);
+  $('timer').textContent=[Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(x=>String(x).padStart(2,'0')).join(':');
+  const expired=$('expired');expired.style.display=rem<=0?'flex':'none';
+  if(rem<=0&&dialog.open)dialog.close();
+  $('ronova-admin-pause').textContent=paused?'Продолжить':'Пауза';
+  $('ronova-admin-state').textContent=paused?'Отсчёт приостановлен':'Осталось '+$('timer').textContent;
+ }
+ // Replace legacy tick function so the existing interval uses configurable deadline.
+ tick=update;
+ $('ronova-admin-duration').value=duration;
+ admin.onclick=()=>{panel.showModal();$('ronova-admin-password').focus()};
+ $('ronova-admin-close').onclick=()=>panel.close();
+ $('ronova-admin-login').onclick=()=>{
+  if($('ronova-admin-password').value!=='1818'){$('ronova-admin-error').textContent='Неверный пароль';return}
+  $('ronova-admin-error').textContent='';$('ronova-admin-auth').hidden=true;$('ronova-admin-settings').hidden=false;
+ };
+ $('ronova-admin-password').addEventListener('keydown',e=>{if(e.key==='Enter')$('ronova-admin-login').click()});
+ function restart(){paused=0;localStorage.removeItem(pausedKey);deadline=Date.now()+duration*60000;localStorage.setItem(deadlineKey,String(deadline));localStorage.setItem('ronova-start-v1',String(Date.now()));update()}
+ $('ronova-admin-apply').onclick=()=>{duration=Math.max(1,Math.min(1440,Number($('ronova-admin-duration').value)||120));localStorage.setItem(durationKey,String(duration));restart()};
+ $('ronova-admin-reset').onclick=restart;
+ $('ronova-admin-pause').onclick=()=>{
+  if(paused){deadline=Date.now()+paused;paused=0;localStorage.removeItem(pausedKey);localStorage.setItem(deadlineKey,String(deadline))}
+  else{paused=Math.max(1,remaining());localStorage.setItem(pausedKey,String(paused))}
+  update();
+ };
+ update();setInterval(update,1000);
 })();
 </script></body></html>
