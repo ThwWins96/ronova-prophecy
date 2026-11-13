@@ -84,6 +84,31 @@ main{z-index:2}
 .clock{width:min(94vw,550px)!important;height:auto!important;aspect-ratio:550/429!important;border:0!important;border-radius:0!important;background:transparent url("./ronova-clock.png") center / contain no-repeat!important;box-shadow:none!important;filter:drop-shadow(0 0 20px #9b153380)!important;margin:0 auto 6px!important}
 .clock:before,.clock:after,.clock .dial-art,.clock .sigil,.clock span,.clock .hand,.clock .center{display:none!important}
 @media(max-width:600px){.clock{width:min(100vw,550px)!important;margin-top:-5px!important}}
+
+/* Vector reconstruction of the reference clock, resolution-independent */
+.clock{width:min(96vw,620px)!important;height:auto!important;aspect-ratio:550/429!important;background:none!important;filter:none!important;overflow:visible!important;margin:0 auto 0!important;isolation:isolate}
+.clock:before,.clock:after{display:none!important}
+.clock .ronova-clock-svg{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 8px #ed1439a6)}
+.clock .dial-art,.clock span,.clock .hand,.clock .center,.clock .sigil{display:none!important}
+.ronova-clock-svg .clock-rotor{transform-box:fill-box;transform-origin:50% 50%}
+.ronova-clock-svg .clock-aura{animation:ronovaAura 6s ease-in-out infinite alternate}
+.ronova-clock-svg .clock-rune{animation:ronovaRune 8s ease-in-out infinite alternate}
+@keyframes ronovaAura{from{opacity:.36;filter:blur(4px)}to{opacity:.75;filter:blur(8px)}}
+@keyframes ronovaRune{from{opacity:.65}to{opacity:1}}
+#eyes:after{background-size:cover!important;background-position:center center!important;mask-image:linear-gradient(to bottom,#000 0%,#000 78%,transparent 100%)!important;filter:contrast(1.04) saturate(1.2)!important}
+body{background:radial-gradient(ellipse at 50% 44%,#46121b 0%,#210710 52%,#090208 100%)!important}
+body:before{background:radial-gradient(ellipse at 50% 50%,transparent 0%,#040005aa 100%),repeating-linear-gradient(0deg,transparent 0 3px,#ff5c6707 4px 5px)!important}
+#ronova-atmosphere{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:.65}
+#ronova-atmosphere:before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 0deg at 50% 40%,transparent 0deg,#bc15421a 36deg,transparent 65deg,#8d12a41a 110deg,transparent 150deg,#d3151f1c 240deg,transparent 290deg);animation:ronovaMist 48s linear infinite}
+#ronova-atmosphere:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 48% 20%,#d92e3838 0%,transparent 40%);animation:ronovaAura 9s ease-in-out infinite alternate}
+@keyframes ronovaMist{to{transform:rotate(360deg)}}
+#ronova-particles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.ronova-particle{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#e94560;box-shadow:0 0 8px 2px #e52c52;opacity:.6;animation:ronovaFloat var(--t) ease-in-out infinite alternate;animation-delay:var(--d)}
+@keyframes ronovaFloat{to{transform:translate(var(--dx),-42px);opacity:.12}}
+#ronova-controls{position:fixed;right:12px;bottom:12px;z-index:9;display:flex;gap:7px;align-items:center}
+#ronova-controls button{background:#170713db;color:#f7c3c8;border:1px solid #9d4358;border-radius:50px;padding:9px 12px;font:13px Georgia,serif;cursor:pointer;backdrop-filter:blur(8px)}
+#ronova-controls button:focus-visible{outline:2px solid #ffc1c9}
+@media(prefers-reduced-motion:reduce){#ronova-atmosphere:before,#ronova-atmosphere:after,.ronova-particle,.ronova-clock-svg .clock-aura,.ronova-clock-svg .clock-rune{animation:none!important}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -165,4 +190,64 @@ document.querySelectorAll('#eyes .eye').forEach((e,i)=>{
  e.style.maxWidth='none';
  e.style.opacity=i===0?'1':'.95';
 });
+
+/* Detailed independent SVG clock. All paths are vector and remain crisp at any resolution. */
+(function(){
+const old=document.querySelector('.ronova-clock-svg');if(old)old.remove();
+const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+svg.setAttribute('viewBox','0 0 550 429');svg.setAttribute('aria-label','Анимированные часы Роновы');svg.classList.add('ronova-clock-svg');
+const cx=295,cy=210;
+let beams='',ticks='',numbers='';
+for(let i=0;i<12;i++){
+ const a=i*Math.PI/6-Math.PI/2;
+ const x1=cx+103*Math.cos(a),y1=cy+103*Math.sin(a);
+ const x2=cx+268*Math.cos(a),y2=cy+268*Math.sin(a);
+ beams+='<path d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+' L'+x2.toFixed(2)+' '+y2.toFixed(2)+'" stroke="'+(i%3===0?'#b21aee':'#a217c0')+'" stroke-width="'+(i%3===0?3:2)+'" opacity=".65"/>';
+ const x3=cx+195*Math.cos(a),y3=cy+195*Math.sin(a);
+ ticks+='<path d="M'+(x3-7).toFixed(1)+' '+(y3-7).toFixed(1)+' l14 14 M'+(x3+7).toFixed(1)+' '+(y3-7).toFixed(1)+' l-14 14" stroke="#b61fe0" stroke-width="2.3" opacity=".68"/>';
+}
+const nums=['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];
+nums.forEach((n,i)=>{let a=i*Math.PI/6-Math.PI/2;let x=cx+99*Math.cos(a),y=cy+99*Math.sin(a);numbers+='<text x="'+x.toFixed(1)+'" y="'+(y+9).toFixed(1)+'" fill="#ed1a2b" font-size="30" font-family="Georgia,serif" text-anchor="middle" font-weight="bold" filter="url(#redglow)">'+n+'</text>'});
+svg.innerHTML='<defs><filter id="redglow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="violetglow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5"/></filter><radialGradient id="clockCenter"><stop stop-color="#100315"/><stop offset=".78" stop-color="#09020b"/><stop offset="1" stop-color="#250611"/></radialGradient></defs>'
++'<g class="clock-aura">'+beams+'</g><g>'+beams+ticks+'</g>'
++'<circle cx="'+cx+'" cy="'+cy+'" r="79" fill="url(#clockCenter)" stroke="#df1829" stroke-width="2.7" filter="url(#redglow)"/>'
++'<circle cx="'+cx+'" cy="'+cy+'" r="66" fill="none" stroke="#781329" stroke-width=".7" opacity=".45"/>'
++'<g>'+numbers+'</g>'
++'<g class="clock-rune" transform="translate(242 156)" stroke="#df2132" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#redglow)">'
++'<path d="M12 61 Q30 42 40 23 L55 42 L70 27 L82 53 L103 54 L78 69 L66 85 L43 79 L30 90 L35 66Z"/>'
++'<path d="M35 20 L44 5 L53 26 M44 5 L67 14 L73 35 M12 61 L4 82 L27 80 M35 66 L10 45 M66 85 L78 104 M82 53 L108 38"/>'
++'<path d="M34 59 Q53 42 76 57 Q55 77 34 59Z"/><circle cx="55" cy="58" r="8"/><circle cx="55" cy="58" r="2" fill="#ff3347"/>'
++'</g>'
++'<g id="ronova-hour-rotor" transform="rotate(0 '+cx+' '+cy+')"><path d="M'+cx+' '+cy+' L'+(cx+66)+' '+(cy+51)+' L'+(cx+56)+' '+(cy+45)+' L'+(cx+54)+' '+(cy+63)+' L'+(cx+40)+' '+(cy+47)+' L'+(cx+34)+' '+(cy+52)+'Z" fill="#ec2033" stroke="#ff4a57" stroke-width="1.2" filter="url(#redglow)"/></g>'
++'<g id="ronova-minute-rotor" transform="rotate(0 '+cx+' '+cy+')"><path d="M'+cx+' '+cy+' L'+(cx+124)+' '+(cy+96)+' L'+(cx+104)+' '+(cy+84)+' L'+(cx+95)+' '+(cy+90)+' L'+(cx+74)+' '+(cy+60)+' L'+(cx+63)+' '+(cy+62)+'Z" fill="#d91c2f" stroke="#ff394c" stroke-width="1.1" filter="url(#redglow)"/></g>'
++'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#f32639" filter="url(#redglow)"/>';
+document.getElementById('clock').prepend(svg);
+const begin=Number(localStorage.getItem('ronova-start-v1'))||Date.now();
+function animateClock(){const progress=Math.min(1,Math.max(0,(Date.now()-begin)/7200000));document.getElementById('ronova-minute-rotor').setAttribute('transform','rotate('+(progress*720)+' 295 210)');document.getElementById('ronova-hour-rotor').setAttribute('transform','rotate('+(progress*60)+' 295 210)')}
+animateClock();setInterval(animateClock,1000);
+})();
+/* Atmosphere, particles, and original synthesized ambient audio; user gesture required. */
+(function(){
+document.body.insertAdjacentHTML('afterbegin','<div id="ronova-atmosphere" aria-hidden="true"></div><div id="ronova-particles" aria-hidden="true"></div>');
+const dust=document.getElementById('ronova-particles');
+for(let i=0;i<24;i++){let p=document.createElement('span');p.className='ronova-particle';p.style.cssText='--x:'+((i*47.71)%100)+'%;--y:'+((i*29.17)%100)+'%;--s:'+(1+i%3)+'px;--t:'+(5+i%7)+'s;--d:'+(-i*.43)+'s;--dx:'+((i%2?1:-1)*(12+i%17))+'px';dust.append(p)}
+const controls=document.createElement('div');controls.id='ronova-controls';
+controls.innerHTML='<button type="button" id="ronova-sound" aria-pressed="false" title="Авторская атмосферная музыка">♫ Звук: выкл.</button><button type="button" id="ronova-effects" aria-pressed="true">✧ Эффекты</button>';
+document.body.append(controls);
+let ctx=null,master=null,voices=[],playing=false,fx=true;
+function startSound(){
+ const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+ ctx=ctx||new Audio();ctx.resume();
+ master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+ const frequencies=[55,82.4069,110,164.8138,220];
+ frequencies.forEach((f,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=i===0?'sine':'triangle';osc.frequency.value=f;gain.gain.value=i===0?.07:.009;osc.connect(gain);gain.connect(master);osc.start();voices.push(osc)});
+ const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.13;lg.gain.value=.014;lfo.connect(lg);lg.connect(master.gain);lfo.start();voices.push(lfo);
+ master.gain.setTargetAtTime(.15,ctx.currentTime,.6);
+}
+function stopSound(){if(master&&ctx){master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,.2);const old=voices;setTimeout(()=>old.forEach(o=>{try{o.stop()}catch(e){}}),900);voices=[];master=null}}
+const button=document.getElementById('ronova-sound');
+button.onclick=()=>{playing=!playing;if(playing)startSound();else stopSound();button.textContent=playing?'♫ Звук: вкл.':'♫ Звук: выкл.';button.setAttribute('aria-pressed',String(playing))};
+document.getElementById('ronova-effects').onclick=e=>{fx=!fx;document.getElementById('ronova-atmosphere').style.display=fx?'':'none';dust.style.display=fx?'':'none';e.currentTarget.setAttribute('aria-pressed',String(fx));e.currentTarget.textContent=fx?'✧ Эффекты':'✧ Без эффектов'};
+document.addEventListener('visibilitychange',()=>{if(ctx){if(document.hidden)ctx.suspend();else if(playing)ctx.resume()}});
+})();
 </script></body></html>
