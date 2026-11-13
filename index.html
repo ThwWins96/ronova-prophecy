@@ -359,11 +359,13 @@ function setOst(enabled){
  button.setAttribute('aria-pressed',String(enabled));
  const host=document.getElementById('ronova-ost-frame');
  if(enabled){
-  host.innerHTML='<iframe title="O Mors — HOYO-MiX (официальная запись)" src="https://www.youtube-nocookie.com/embed/Q-88qnPNWPI?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" loading="eager" allowfullscreen></iframe>';
+  host.innerHTML='<iframe title="O Mors — HOYO-MiX (официальная запись)" src="https://www.youtube-nocookie.com/embed/Q-88qnPNWPI?autoplay=1&loop=1&playlist=Q-88qnPNWPI&playsinline=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" loading="eager" allowfullscreen></iframe>';
  }else host.replaceChildren();
 }
 button.onclick=()=>setOst(!ostPlaying);
 document.getElementById('ronova-ost-close').onclick=()=>setOst(false);
+// Attempt autoplay on arrival; the browser may block audible playback until a gesture.
+setOst(true);
 document.getElementById('ronova-effects').onclick=e=>{fx=!fx;document.getElementById('ronova-atmosphere').style.display=fx?'':'none';dust.style.display=fx?'':'none';e.currentTarget.setAttribute('aria-pressed',String(fx));e.currentTarget.textContent=fx?'✧ Эффекты':'✧ Без эффектов'};
 document.addEventListener('visibilitychange',()=>{if(ctx){if(document.hidden)ctx.suspend();else if(playing)ctx.resume()}});
 })();
