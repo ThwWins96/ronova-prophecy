@@ -134,6 +134,17 @@ h1{font-family:Georgia,serif!important;color:#f5d6d2!important;text-shadow:0 0 1
 #ronova-atmosphere{opacity:.18!important}
 #ronova-atmosphere:after{opacity:.25!important}
 body:before{opacity:.25!important}
+
+.pigpen-wrap{display:flex;flex-direction:column;gap:14px;align-items:center;margin:12px 0 20px}
+.pigpen-cipher{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;max-width:100%;padding:14px 10px;border:1px solid #a03a4d88;background:#140711d9;border-radius:12px}
+.pigpen-cell{width:43px;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.pigpen-cell svg{width:39px;height:39px;overflow:visible;filter:drop-shadow(0 0 3px #a62644)}
+.pigpen-cell small{font-size:10px;color:#c9a4ad}
+.pigpen-key{display:grid;grid-template-columns:repeat(9,minmax(25px,1fr));gap:6px;max-width:390px;margin:6px auto}
+.pigpen-key-item{display:flex;align-items:center;flex-direction:column;gap:2px;color:#dfc1c6;font-size:12px}
+.pigpen-key-item svg{width:27px;height:27px}
+.pigpen-hint{font-size:13px;color:#caa9b3;line-height:1.45}
+@media(max-width:420px){.pigpen-cell{width:34px}.pigpen-cell svg{width:32px;height:32px}.pigpen-key{gap:3px}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -288,5 +299,34 @@ if(controls&&!document.getElementById('ronova-music-link')){
  const link=document.createElement('a');link.id='ronova-music-link';link.href='https://www.youtube.com/results?search_query=Genshin+Impact+Ronova+O+Mors+OST';link.target='_blank';link.rel='noopener noreferrer';link.textContent='♫ Тема Роновы';link.title='Поиск музыкальной темы O Mors из Genshin Impact';controls.append(link);
 }
 const sound=document.getElementById('ronova-sound');if(sound){sound.title='Авторский эмбиент, не оригинальная музыка Genshin Impact'}
+})();
+
+/* Working pigpen substitution with a visible decoding key. */
+(function(){
+const alphabet='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+function glyph(letter){
+ const n=alphabet.indexOf(letter.toLowerCase());if(n<0)return '';
+ const cell=n%9,row=Math.floor(cell/3),col=cell%3;
+ let d='';
+ if(col===0)d+='M27 4 V46 ';if(col===1)d+='M4 4 V46 M46 4 V46 ';if(col===2)d+='M4 4 V46 ';
+ if(row===0)d+='M4 27 H46 ';if(row===1)d+='M4 4 H46 M4 46 H46 ';if(row===2)d+='M4 27 H46 ';
+ let dot=n>=9&&n<18;let cross=n>=18;
+ if(cross){const k=n-18;const a=(k%8)*Math.PI/4;d='M25 25 L'+(25+21*Math.cos(a)).toFixed(1)+' '+(25+21*Math.sin(a)).toFixed(1)+' M25 25 L'+(25+21*Math.cos(a+Math.PI/2)).toFixed(1)+' '+(25+21*Math.sin(a+Math.PI/2)).toFixed(1);dot=n>=26}
+ return '<svg viewBox="0 0 50 50" role="img" aria-label="Символ шифра"><path d="'+d+'" fill="none" stroke="#f27888" stroke-width="3" stroke-linecap="square"/>'+(dot?'<circle cx="25" cy="25" r="3.5" fill="#ffd6ce"/>':'')+'</svg>';
+}
+function drawPigpen(word){
+ const cipher='<div class="pigpen-cipher">'+[...word].map(c=>'<span class="pigpen-cell">'+glyph(c)+'</span>').join('')+'</div>';
+ const key='<div class="pigpen-key">'+[...alphabet].map(c=>'<div class="pigpen-key-item">'+glyph(c)+'<span>'+c.toUpperCase()+'</span></div>').join('')+'</div>';
+ return '<div class="pigpen-wrap"><div class="pigpen-hint">Каждый символ соответствует одной букве. Сопоставь знаки с таблицей и введи полученное слово.</div>'+cipher+'<details><summary>Показать ключ масонского шифра</summary>'+key+'</details></div>';
+}
+const oldOpen=openPuzzle;
+openPuzzle=function(word){
+ oldOpen(word);
+ if(word==='застыл'){
+  document.getElementById('clue').textContent='Масонский шифр: расшифруй последовательность символов.';
+  const div=document.createElement('div');div.id='pigpen-puzzle';div.innerHTML=drawPigpen(word);
+  document.getElementById('clue').after(div);
+ }else document.getElementById('pigpen-puzzle')?.remove();
+};
 })();
 </script></body></html>
