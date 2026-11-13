@@ -57,6 +57,17 @@ main{z-index:2}
 .clock .sigil{display:none!important}
 .prophecy{backdrop-filter:blur(5px)}
 @media(max-width:600px){.clock .hand:before{height:95px}.clock .hand.hour:before{height:68px}}
+
+/* Eye constellation laid out to match the 550×309 reference image. */
+#eyes{position:fixed;inset:0;overflow:hidden;pointer-events:none;mask-image:none!important;filter:none!important;mix-blend-mode:normal!important;opacity:1!important}
+#eyes:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#ae4b4b77,transparent 58%),linear-gradient(180deg,#230408 0%,#3b0b0c 50%,#5d2224 100%);opacity:.45}
+.eye{animation:none!important;filter:none!important;transform:none!important;opacity:1}
+.eye svg{width:100%;height:100%;overflow:visible}
+.eye:nth-child(1){z-index:4}
+.eye:nth-child(n+2){z-index:2}
+.eye:nth-child(n+2) svg{filter:drop-shadow(0 0 5px #a32b26)}
+.eye .eye-glow{filter:blur(6px)}
+@media(min-width:850px){#eyes{background-size:cover}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -112,4 +123,21 @@ const dial=document.createElementNS('http://www.w3.org/2000/svg','svg');dial.set
 let rays='';for(let i=0;i<12;i++){let a=i*Math.PI/6;let x=250+228*Math.sin(a),y=250-228*Math.cos(a);rays+='<path d="M250 250 L'+x+' '+y+'" stroke="'+(i%2?'#7b1059':'#9d1634')+'" stroke-width="2" opacity=".38"/>'}
 dial.innerHTML='<defs><filter id="dialGlow"><feGaussianBlur stdDeviation="4"/></filter></defs>'+rays+'<circle cx="250" cy="250" r="124" stroke="#ea1b2d" stroke-width="5" fill="#05020a" opacity=".9"/><circle cx="250" cy="250" r="124" stroke="#ff2132" stroke-width="12" fill="none" opacity=".35" filter="url(#dialGlow)"/><g stroke="#e52231" stroke-width="3" fill="none"><path d="M184 233 Q216 186 257 214 Q281 228 303 241 Q276 250 260 270 Q218 283 184 233Z"/><path d="M190 229 Q208 203 207 172 L226 209 L236 187 L241 215 M261 217 Q285 202 302 216 M215 267 Q207 289 182 295 M254 270 Q284 302 315 322"/><path d="M211 240 Q247 213 274 239 Q250 266 211 240Z"/><circle cx="244" cy="241" r="10"/><circle cx="244" cy="241" r="3" fill="#ff2534"/><circle cx="183" cy="295" r="9"/><path d="M183 295 L143 329 M315 322 L347 355"/></g><path d="M250 244 L390 392 L360 375 L340 386 L320 346 L304 354 L282 300Z" fill="#d91b2b" opacity=".9"/>';
 document.getElementById('clock').prepend(dial);
+
+/* Exact relative coordinates taken from the supplied 550×309 eye composition.
+   Preserve the constellation instead of scattering random eyes. */
+const eyeLayout=[
+{x:49.3,y:27.3,w:170,scale:1.0,rot:0,hero:true},
+{x:18.4,y:16.0,w:91,scale:1,rot:13},
+{x:79.7,y:32.8,w:85,scale:1,rot:-16},
+{x:8.5,y:55.5,w:104,scale:1,rot:4},
+{x:23.2,y:43.2,w:65,scale:1,rot:5},
+{x:63.6,y:47.0,w:69,scale:1,rot:-13},
+{x:76.4,y:52.2,w:70,scale:1,rot:-8},
+{x:76.0,y:8.7,w:74,scale:1,rot:-22},
+{x:1.0,y:31.7,w:68,scale:1,rot:18}
+];
+const eyeMarkup=(i,hero)=>'<svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="r'+i+'"><stop stop-color="#fff4df"/><stop offset=".1" stop-color="#ffb98b"/><stop offset=".21" stop-color="#ee634b"/><stop offset=".45" stop-color="#8d2425"/><stop offset=".72" stop-color="#41101a"/><stop offset="1" stop-color="#21040c"/></radialGradient><radialGradient id="a'+i+'"><stop stop-color="#f35b4c" stop-opacity=".65"/><stop offset="1" stop-color="#f35b4c" stop-opacity="0"/></radialGradient></defs><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 Q181 70 146 78 Q110 '+(hero?'115':'91')+' 74 79 Q38 77 0 61Z" fill="url(#a'+i+')" class="eye-glow"/><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 Q181 70 146 78 Q110 '+(hero?'115':'91')+' 74 79 Q38 77 0 61Z" fill="#320b0d" opacity=".9"/><ellipse cx="110" cy="57" rx="'+(hero?39:25)+'" ry="'+(hero?45:25)+'" fill="url(#r'+i+')"/><ellipse cx="110" cy="57" rx="'+(hero?22:12)+'" ry="'+(hero?30:15)+'" fill="#a6342c"/><circle cx="110" cy="57" r="'+(hero?7:4)+'" fill="#fff1d7"/><path d="M0 61 Q40 34 73 42 Q113 '+(hero?'2':'26')+' 146 43 Q178 43 220 21 M0 61 Q38 77 74 79 Q110 '+(hero?'115':'91')+' 146 78 Q181 70 220 21" fill="none" stroke="#fb9b7c" stroke-width="'+(hero?3.6:2.4)+'"/><path d="M14 55 Q52 23 74 36 M150 37 Q190 45 211 22 M70 84 Q110 107 148 84" fill="none" stroke="#b93c32" stroke-width="1.4"/><path d="M96 21 L88 5 M113 18 L120 0 M137 30 L160 6 M82 85 L66 112 M121 92 L127 119" fill="none" stroke="#b83d37" stroke-width="1.5"/></svg>';
+const field=document.getElementById('eyes');field.innerHTML='';
+eyeLayout.forEach((p,i)=>{const e=document.createElement('div');e.className='eye';e.style.cssText='position:absolute;left:'+p.x+'%;top:'+p.y+'%;width:clamp('+(p.hero?110:38)+'px,'+(p.hero?28:12)+'vw,'+p.w+'px);height:auto;aspect-ratio:220/120;transform:translate(-50%,-50%) rotate('+p.rot+'deg)!important;';e.innerHTML=eyeMarkup(i,p.hero);field.append(e)});
 </script></body></html>
