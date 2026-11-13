@@ -1,0 +1,23 @@
+name: Install exact Ronova clock artwork
+on:
+  push:
+    paths:
+      - '.github/workflows/clock.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download reference clock artwork
+        run: |
+          curl -fLsS --retry 3 'https://media.canva.com/v2/image-resize/format:PNG/height:156/quality:100/uri:ifs%3A%2F%2FM%2F4863ed34-4782-4177-8510-fb1257066732/watermark:F/width:200?csig=AAAAAAAAAAAAAAAAAAAAAGed0fQczfWGqMZMElJJAzuvLp6kllYyj8NhhPXscTmy&exp=1794606711&osig=AAAAAAAAAAAAAAAAAAAAAFBQJW9xqpVSmkw_1O33BkknwYgGG62YsvNhGKxa4aXq&signer=media-rpc&token=AAIAAU0AJDQ4NjNlZDM0LTQ3ODItNDE3Ny04NTEwLWZiMTI1NzA2NjczMgAAAAABodblQNj8vh8HEjFTUxPdCN961wDUpeSZsTLyxBagtXhzJVOfYg&x-canva-quality=thumbnail' -o ronova-clock.png
+          test -s ronova-clock.png
+      - name: Commit reference artwork
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ronova-clock.png
+          git diff --cached --quiet || (git commit -m "Add Ronova clock reference image" && git pull --rebase && git push)
