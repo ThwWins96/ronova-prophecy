@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Пророчество Роновы</title>
+<style>
+:root{color-scheme:dark;font-family:Georgia,'Times New Roman',serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 55%,#631c22 0%,#25070c 48%,#080307 100%);color:#f5d9d3;overflow-x:hidden}
+#eyes{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.8}.eye{position:absolute;width:var(--w);height:calc(var(--w)*.38);border:2px solid #b83b38;border-radius:90% 10% 90% 10%/80% 15% 85% 20%;transform:rotate(var(--r));box-shadow:0 0 15px #f44a3d, inset 0 0 20px #c23434;animation:blink 8s infinite;animation-delay:var(--d)}.eye:before{content:"";position:absolute;left:40%;top:7%;height:80%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#ffe0ba 0 8%,#ff5647 12%,#3e090e 37%,#c8443c 56%,transparent 70%);box-shadow:0 0 22px #fd6558}@keyframes blink{0%,90%,100%{scale:1 1}93%{scale:1 .08}96%{scale:1 1}}
+main{position:relative;z-index:2;max-width:1100px;min-height:100vh;margin:auto;padding:22px 18px 80px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.clock{position:relative;width:190px;height:190px;border-radius:50%;border:2px solid #9f202b;box-shadow:0 0 30px #9e1b2d88,inset 0 0 40px #8b142355;background:radial-gradient(circle,#16030b 45%,#3b0912);margin:10px auto 15px}.clock span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(calc(var(--i)*30deg)) translateY(-76px) rotate(calc(var(--i)*-30deg));font-size:15px;color:#ff5964;text-shadow:0 0 8px #e22}.hand{position:absolute;bottom:50%;left:calc(50% - 2px);width:4px;transform-origin:bottom;background:#f33;box-shadow:0 0 8px #f33;border-radius:5px}.hand.hour{height:43px}.hand.minute{height:64px;width:2px}.center{position:absolute;left:calc(50% - 5px);top:calc(50% - 5px);width:10px;height:10px;border-radius:50%;background:#ffb3a5;box-shadow:0 0 15px #f44}
+.timer{font:19px monospace;letter-spacing:5px;color:#ff8d87;text-shadow:0 0 12px #f44}h1{margin:48px 0 25px;text-transform:uppercase;font-weight:400;font-size:clamp(30px,6vw,62px);letter-spacing:.14em;text-shadow:0 0 13px #f22,0 0 35px #aa172a}
+.prophecy{font-size:clamp(21px,3vw,33px);line-height:2.3;max-width:950px;color:#e7c9bd}.word{display:inline-block;margin:0 .12em;vertical-align:middle}.secret{background:transparent;border:0;cursor:pointer;padding:4px 7px;color:#c9a16d;vertical-align:middle;border-bottom:1px solid #9b5647;filter:drop-shadow(0 0 5px #e74b3d);transition:transform .2s}.secret:hover,.secret:focus-visible{transform:translateY(-3px);outline:1px solid #c97a65}.glyph{display:inline-block;width:22px;height:31px;object-fit:contain;vertical-align:middle}.fallback{font-family:serif;font-size:23px;color:#c9a16d}
+.note{font-size:13px;letter-spacing:.12em;color:#c69a96;margin-top:30px}dialog{border:1px solid #8b3642;background:linear-gradient(135deg,#210912,#0b060e);color:#f8dcd5;border-radius:12px;width:min(92vw,500px);padding:28px;box-shadow:0 0 65px #ae172f88}dialog::backdrop{background:#000b;backdrop-filter:blur(6px)}dialog h2{color:#f39b8c;margin:0 0 15px}dialog p{line-height:1.7;overflow-wrap:anywhere}input{background:#120910;border:1px solid #9b4451;color:white;border-radius:6px;font:18px Georgia;padding:13px;width:100%;margin:12px 0}button.action{border:1px solid #a94750;background:#521621;color:#ffe2d9;padding:12px 22px;border-radius:7px;cursor:pointer}.close{float:right;background:none;color:#f5b2ac;border:0;font-size:26px;cursor:pointer}.error{color:#ff8888;min-height:22px}.expired{position:fixed;inset:0;background:#070305;z-index:10;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center}.expired h2{color:#fa5555;font-size:clamp(35px,8vw,70px);font-weight:normal}
+@media(prefers-reduced-motion:reduce){.eye{animation:none}}
+</style></head><body>
+<div id="eyes" aria-hidden="true"></div>
+<main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
+<div class="timer" id="timer">02:00:00</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись символа, чтобы раскрыть тайну</p></main>
+<dialog id="puzzle"><button class="close" id="close" aria-label="Закрыть">×</button><h2 id="puzzleTitle">Загадка</h2><p id="clue"></p><form id="answerForm"><input id="answer" autocomplete="off" placeholder="Введи разгаданное слово" required><button class="action" type="submit">Раскрыть</button><p class="error" id="error" aria-live="polite"></p></form></dialog>
+<div class="expired" id="expired"><h2>Время истекло</h2><p>Чертоги Роновы закрыты.</p></div>
+<script>
+const text='В чертогах, где застыл последний вздох, выход откроется лишь тому, кто добровольно сотрет из сердца то, что греет память о здешнем мире';
+const puzzles={
+'чертогах':['Анаграмма','ГОРТЕЧАХ'],
+'застыл':['Масонский шифр','Расшифруй слово с помощью масонской решётки.'],
+'последний':['Цифровая замена','17-16-19-13-6-5-15-10-11'],
+'вздох':['Анаграмма','ХОДВЗ'],
+'выход':['Шифр Цезаря','ЁЮШСЗ'],
+'откроется':['Двоичный код','Расшифруй двоичную последовательность UTF-8: '+binary('откроется')],
+'лишь':['Азбука Морзе','.-.. .. ---- -..- (русская азбука Морзе)'],
+'добровольно':['Двоичный код','Расшифруй двоичную последовательность UTF-8: '+binary('добровольно')],
+'сотрет':['Шифр Цезаря','ФСХУИЦ'],
+'сердца':['Атбаш','Расшифруй по русскому алфавиту Атбаш: '+atbash('сердца')],
+'греет':['Азбука Морзе','--. .-. . . - (русская азбука Морзе)'],
+'память':['Атбаш','Расшифруй по русскому алфавиту Атбаш: '+atbash('память')],
+'здешнем':['Цифровая замена','9-5-6-26-15-6-14'],
+'мире':['Анаграмма','РИМЕ']};
+function binary(s){return [...new TextEncoder().encode(s)].map(x=>x.toString(2).padStart(8,'0')).join(' ')}
+function atbash(s){let a='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';return [...s].map(c=>a.includes(c)?a[a.length-1-a.indexOf(c)]:c).join('')}
+const glyphs=['ᚨ','ᛒ','ᚲ','ᛞ','ᛖ','ᚠ','ᚷ','ᚺ','ᛁ','ᛃ','ᚴ','ᛚ','ᛗ','ᚾ','ᛟ','ᛈ','ᛩ','ᚱ','ᛋ','ᛏ','ᚢ','ᚡ','ᚹ','ᛪ','ᛦ','ᛉ'];function symbols(w){return [...w].map(c=>'<span class="fallback">'+glyphs[(c.toLowerCase().charCodeAt(0)+5)%glyphs.length]+'</span>').join('')}
+const key='ronova-start-v1',solvedKey='ronova-solved-v1',now=Date.now();let started=Number(localStorage.getItem(key));if(!started||started>now){started=now;localStorage.setItem(key,String(started))}
+let solved=new Set(JSON.parse(localStorage.getItem(solvedKey)||'[]')),active=null;
+const prop=document.getElementById('prophecy'),dialog=document.getElementById('puzzle');
+function render(){prop.innerHTML='';text.split(/(\s+)/).forEach((part)=>{if(/^\s+$/.test(part)){prop.append(document.createTextNode(part));return}let word=part.toLowerCase().replace(/[^а-яё]/g,'');if(puzzles[word]&&!solved.has(word)){let b=document.createElement('button');b.className='secret';b.title='Открыть загадку';b.setAttribute('aria-label','Зашифрованное слово');b.innerHTML=symbols(word)+(part.endsWith(',')?',':'');b.onclick=()=>openPuzzle(word);prop.append(b)}else{let span=document.createElement('span');span.className='word';span.textContent=part;prop.append(span)}})}
+function openPuzzle(word){active=word;document.getElementById('puzzleTitle').textContent='Испытание Роновы';document.getElementById('clue').textContent=puzzles[word][0]+': '+puzzles[word][1];document.getElementById('answer').value='';document.getElementById('error').textContent='';dialog.showModal()}
+document.getElementById('close').onclick=()=>dialog.close();document.getElementById('answerForm').onsubmit=e=>{e.preventDefault();let answer=document.getElementById('answer').value.trim().toLowerCase().replace(/ё/g,'е');if(answer===active.replace(/ё/g,'е')){solved.add(active);localStorage.setItem(solvedKey,JSON.stringify([...solved]));dialog.close();render()}else document.getElementById('error').textContent='Ответ неверен. Попробуй ещё.'};
+const roman=['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];roman.forEach((v,i)=>{let s=document.createElement('span');s.style.setProperty('--i',i);s.textContent=v;document.getElementById('clock').append(s)});
+function tick(){let remaining=Math.max(0,7200000-(Date.now()-started)),s=Math.ceil(remaining/1000);document.getElementById('timer').textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');document.getElementById('minute').style.transform='rotate('+((7200000-remaining)/7200000*720)+'deg)';document.getElementById('hour').style.transform='rotate('+((7200000-remaining)/7200000*60)+'deg)';if(!remaining){dialog.close();document.getElementById('expired').style.display='flex'}}tick();setInterval(tick,1000);
+const eyePositions=[[4,12,125,-15],[28,8,100,12],[68,8,125,-20],[86,20,140,10],[8,46,170,10],[72,42,95,-14],[89,57,130,20],[22,76,105,-18],[60,78,145,10],[44,26,250,-5],[2,85,85,10],[79,85,110,-10]];
+const eyes=document.getElementById('eyes');eyePositions.forEach(([x,y,w,r],i)=>{let e=document.createElement('div');e.className='eye';e.style.cssText='left:'+x+'%;top:'+y+'%;--w:'+w+'px;--r:'+r+'deg;--d:'+(i*.7)+'s';eyes.append(e)});
+render();
+</script></body></html>
