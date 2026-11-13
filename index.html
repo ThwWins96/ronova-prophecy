@@ -39,6 +39,24 @@ h1{margin:24px 0 26px;font-family:Georgia,serif;font-size:clamp(29px,6vw,62px);l
 .ronova-rune .filled{fill:#c4a16a;stroke:none}
 .note{color:#b18a83}
 dialog{border-color:#b34a4b;box-shadow:0 0 60px #b41432a0}
+
+/* Reference-driven visual reconstruction: crimson eye field and asymmetric dial */
+body{background:radial-gradient(ellipse at 50% 40%,#43121a 0%,#19030c 43%,#08020a 78%,#030106 100%)}
+#eyes{mask-image:none!important;opacity:.95!important;z-index:0;mix-blend-mode:screen}
+.eye{filter:drop-shadow(0 0 7px #fa5646) drop-shadow(0 0 20px #b52c27)!important}
+.eye svg{overflow:visible}
+main{z-index:2}
+.clock{width:min(84vw,440px)!important;height:min(84vw,440px)!important;filter:drop-shadow(0 0 17px #b80c1c)!important;background:radial-gradient(circle,#03020b 0 37%,#09010a 55%,transparent 72%)!important}
+.clock:before,.clock:after{display:none!important}
+.clock .dial-art{position:absolute;inset:-8%;width:116%;height:116%;overflow:visible;pointer-events:none}
+.clock span{font-family:Georgia,serif!important;color:#f11b2c!important;font-size:clamp(23px,5vw,43px)!important;text-shadow:0 0 4px #ed1128,0 0 19px #b00013!important;font-weight:normal!important;transform:translate(-50%,-50%) rotate(calc(var(--i)*30deg)) translateY(calc(min(84vw,440px)*-.36)) rotate(calc(var(--i)*-30deg))!important;z-index:3}
+.clock .hand{z-index:5!important;bottom:auto!important;top:50%;transform-origin:50% 0!important;clip-path:none!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;width:0!important;height:0!important}
+.clock .hand:before{content:"";position:absolute;top:0;left:-6px;width:12px;height:150px;background:#fa192a;clip-path:polygon(50% 0,100% 15%,66% 62%,54% 100%,42% 64%,0 15%);filter:drop-shadow(0 0 8px #f31)}
+.clock .hand.hour:before{height:100px;width:15px;left:-7px}
+.clock .center{z-index:8;left:calc(50% - 8px)!important;top:calc(50% - 8px)!important;width:16px!important;height:16px!important;background:#ff2736!important}
+.clock .sigil{display:none!important}
+.prophecy{backdrop-filter:blur(5px)}
+@media(max-width:600px){.clock .hand:before{height:95px}.clock .hand.hour:before{height:68px}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -86,4 +104,12 @@ const cyr='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
 function runeSvg(ch){let i=cyr.indexOf(ch.toLowerCase());if(i<0)i=0;let path=runePaths[i%26];return '<svg class="ronova-rune" viewBox="0 0 30 35" aria-hidden="true"><path d="'+path+'"/><circle class="filled" cx="'+(i%3===0?25:5)+'" cy="'+(i%2===0?8:27)+'" r="2.2"/></svg>'}
 symbols=function(w){return [...w].map(runeSvg).join('')};
 render();
+
+/* Rebuild eyes as sharp irregular crimson light cuts, not oval icons. */
+const detailedEye=(i)=>'<svg viewBox="0 0 360 145" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="p'+i+'"><stop stop-color="#fff0c5"/><stop offset=".14" stop-color="#ff9d74"/><stop offset=".32" stop-color="#c83b32"/><stop offset=".68" stop-color="#59101a"/><stop offset="1" stop-color="#160308"/></radialGradient><filter id="b'+i+'"><feGaussianBlur stdDeviation="6"/></filter></defs><g opacity=".75" stroke="#9e342d" stroke-width="1.5" fill="none"><path d="M160 39 Q127 -2 100 -11 M191 32 Q222 -6 247 -17 M200 36 Q251 1 286 8 M125 43 Q78 17 42 15 M126 116 Q99 137 92 151 M208 109 Q230 133 248 148"/></g><path d="M2 83 Q75 47 124 57 Q184 0 247 51 Q285 68 359 30 Q300 85 247 98 Q181 139 123 99 Q58 96 2 83Z" fill="#f44a3c" opacity=".28" filter="url(#b'+i+')"/><path d="M2 83 Q75 47 124 57 Q184 0 247 51 Q285 68 359 30 Q300 85 247 98 Q181 139 123 99 Q58 96 2 83Z" fill="#20040c"/><ellipse cx="183" cy="75" rx="49" ry="48" fill="url(#p'+i+')"/><ellipse cx="183" cy="75" rx="27" ry="39" fill="#4b0a11"/><circle cx="183" cy="75" r="9" fill="#ffb38e"/><circle cx="183" cy="75" r="4" fill="#fff2d3"/><path d="M2 83 Q75 47 124 57 Q184 0 247 51 Q285 68 359 30 M2 83 Q58 96 123 99 Q181 139 247 98 Q300 85 359 30" stroke="#ff8b70" stroke-width="4" fill="none"/><path d="M12 80 Q76 51 123 62 Q183 10 245 56 Q285 71 345 37 M10 88 Q73 99 126 105 Q184 143 247 103 Q305 89 350 39" stroke="#ef4039" stroke-width="8" opacity=".6" fill="none" filter="url(#b'+i+')"/></svg>';
+document.querySelectorAll('.eye').forEach((e,i)=>{e.innerHTML=detailedEye(i);e.style.width=(i===9?'380px':(i===0?'210px':e.style.getPropertyValue('--w')));});
+const dial=document.createElementNS('http://www.w3.org/2000/svg','svg');dial.setAttribute('viewBox','0 0 500 500');dial.classList.add('dial-art');
+let rays='';for(let i=0;i<12;i++){let a=i*Math.PI/6;let x=250+228*Math.sin(a),y=250-228*Math.cos(a);rays+='<path d="M250 250 L'+x+' '+y+'" stroke="'+(i%2?'#7b1059':'#9d1634')+'" stroke-width="2" opacity=".38"/>'}
+dial.innerHTML='<defs><filter id="dialGlow"><feGaussianBlur stdDeviation="4"/></filter></defs>'+rays+'<circle cx="250" cy="250" r="124" stroke="#ea1b2d" stroke-width="5" fill="#05020a" opacity=".9"/><circle cx="250" cy="250" r="124" stroke="#ff2132" stroke-width="12" fill="none" opacity=".35" filter="url(#dialGlow)"/><g stroke="#e52231" stroke-width="3" fill="none"><path d="M184 233 Q216 186 257 214 Q281 228 303 241 Q276 250 260 270 Q218 283 184 233Z"/><path d="M190 229 Q208 203 207 172 L226 209 L236 187 L241 215 M261 217 Q285 202 302 216 M215 267 Q207 289 182 295 M254 270 Q284 302 315 322"/><path d="M211 240 Q247 213 274 239 Q250 266 211 240Z"/><circle cx="244" cy="241" r="10"/><circle cx="244" cy="241" r="3" fill="#ff2534"/><circle cx="183" cy="295" r="9"/><path d="M183 295 L143 329 M315 322 L347 355"/></g><path d="M250 244 L390 392 L360 375 L340 386 L320 346 L304 354 L282 300Z" fill="#d91b2b" opacity=".9"/>';
+document.getElementById('clock').prepend(dial);
 </script></body></html>
