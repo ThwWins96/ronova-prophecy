@@ -208,6 +208,19 @@ body:before{opacity:.25!important}
  #ronova-ost-player .ronova-ost-header{font-size:10px!important}
 }
 .binary-key{list-style:none;padding:0;max-height:12rem;overflow:auto;font:14px/1.7 monospace}#clue{overflow-wrap:anywhere}
+
+#timer{font:700 clamp(26px,5.5vw,68px)/1.25 monospace!important;letter-spacing:clamp(1px,.45vw,6px)!important;color:#fff3e4!important;background:#16040ded;border:1px solid #f76d76;border-radius:12px;padding:12px 22px;max-width:100%;box-shadow:0 0 24px #ff284644,inset 0 0 20px #ff33401c;text-shadow:0 2px 2px #000!important;font-variant-numeric:tabular-nums}
+#puzzle{max-height:90dvh;overflow:auto}
+.cipher-text{padding:18px 12px;border:1px solid #c85868;border-radius:8px;background:#08030b;color:#ffe6bb;font:700 21px/1.8 monospace;letter-spacing:2px;overflow-wrap:anywhere}
+.cipher-text:empty{display:none}
+.cipher-explanation{font-size:15px;color:#ead3d0}
+.cipher-alphabet{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:6px;margin:15px 0}
+.cipher-alphabet span{padding:7px 3px;border:1px solid #73313e;border-radius:4px;background:#240b16;text-align:center;font:15px/1.4 monospace;color:#ffe2d5}
+#ronova-second-hand{filter:drop-shadow(0 0 4px #ff2848)}
+#ronova-extra-aura{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1;background:radial-gradient(ellipse at 50% 90%,#f4183220,transparent 65%)}
+#ronova-extra-aura i{position:absolute;left:var(--x);bottom:-15px;width:3px;height:13px;background:#ff876b;box-shadow:0 0 12px #ff2848;transform:rotate(25deg);animation:ronovaRise var(--duration) var(--delay) linear infinite}
+@keyframes ronovaRise{0%{translate:0 0;opacity:0}15%{opacity:.7}80%{opacity:.45}100%{translate:45px -100vh;opacity:0}}
+@media(prefers-reduced-motion:reduce){#ronova-extra-aura i{animation:none}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -626,5 +639,84 @@ sync();setInterval(sync,250);
  $('ronova-admin-apply').onclick = () => change('apply');
  $('ronova-admin-reset').onclick = () => change('reset');
  pause.onclick = () => change(state?.paused_ms === null ? 'pause' : 'resume');
+})();
+
+/* Cipher cards and reading aids. */
+(function(){
+ const alphabet=russianAlphabet.toUpperCase();
+ const morse=['.-','-...','.--','--.','-..','.','.','...-','--..','..','.---','-.-','.-..','--','-.','---','.--.','.-.','...','-','..-','..-.','....','-.-.','---.','----','--.-','--.--','-.--','-..-','..-..','..--','.-.-'];
+ const previous=openPuzzle;
+ openPuzzle=function(word){
+  previous(word);
+  const [type,original]=puzzles[word];
+  const clue=document.getElementById('clue');
+  const aid=document.getElementById('puzzle-aid');
+  document.getElementById('puzzleTitle').textContent=type;
+  let cipher=original;
+  let explanation='';
+  if(type==='Шифр Цезаря'){
+   cipher=original.split(' ').at(-1);
+   explanation='Подсказка — минусовое число смерти. Все буквы сдвинуты на одинаковое число позиций. Алфавит замыкается в круг.';
+  }else if(type==='Цифровая замена'){
+   cipher=original.split(' ').at(-1);
+   explanation='Каждое число обозначает порядковый номер буквы. Считай от А = 1, включая Ё.';
+  }else if(type==='Атбаш'){
+   cipher=original.split(' ').at(-1);
+   explanation='Алфавит читается зеркально. А заменяется на Я, Б на Ю и так далее.';
+  }else if(type==='Двоичный код'){
+   cipher=original.match(/[01]{8}/g).join(' ');
+   explanation='Одна русская буква UTF-8 занимает два байта. Сопоставляй пары групп с таблицей.';
+  }else if(type==='Азбука Морзе'){
+   cipher=original.split(' (')[0];
+   explanation='Точки и тире образуют буквы. Пробел отделяет одну букву от следующей.';
+  }else if(type==='Анаграмма'){
+   explanation='Переставь буквы, чтобы получилось слово, подходящее по смыслу пророчества. Используй каждую букву ровно столько раз, сколько она встречается.';
+  }else{
+   clue.textContent='';
+   return;
+  }
+  clue.className='cipher-text';
+  clue.textContent=cipher.toUpperCase();
+  const note=document.createElement('p');
+  note.className='cipher-explanation';
+  note.textContent=explanation;
+  aid.prepend(note);
+  if(['Шифр Цезаря','Цифровая замена','Атбаш','Анаграмма','Азбука Морзе'].includes(type)){
+   const table=document.createElement('div');
+   table.className='cipher-alphabet';
+   [...alphabet].forEach((letter,index)=>{
+    const item=document.createElement('span');
+    item.textContent=type==='Азбука Морзе'?letter+' '+morse[index]:type==='Цифровая замена'?letter+' '+(index+1):type==='Атбаш'?letter+' ↔ '+alphabet[32-index]:letter;
+    table.append(item);
+   });
+   aid.append(table);
+  }
+ };
+})();
+(function(){
+ const svg=document.querySelector('.ronova-clock-svg');
+ if(!svg)return;
+ const ns='http://www.w3.org/2000/svg';
+ const second=document.createElementNS(ns,'g');
+ second.id='ronova-second-hand';
+ second.innerHTML='<path d="M295 239 L293 221 L294 100 L289 111 L295 76 L301 111 L296 100 L297 221 Z" fill="#ffe0c7" stroke="#ff334d" stroke-width="1.3"/><circle cx="295" cy="210" r="4" fill="#fff0d9"/>';
+ svg.append(second);
+ function update(){
+  const date=new Date();
+  second.setAttribute('transform','rotate('+((date.getSeconds()+date.getMilliseconds()/1000)*6)+' 295 210)');
+ }
+ update();setInterval(update,50);
+ const aura=document.createElement('div');
+ aura.id='ronova-extra-aura';aura.setAttribute('aria-hidden','true');
+ for(let i=0;i<18;i++){
+  const spark=document.createElement('i');
+  spark.style.setProperty('--x',(i*37%100)+'%');
+  spark.style.setProperty('--delay',(-i*1.7)+'s');
+  spark.style.setProperty('--duration',(12+i%7)+'s');
+  aura.append(spark);
+ }
+ document.body.prepend(aura);
+ const toggle=document.getElementById('ronova-effects');
+ toggle.addEventListener('click',()=>{aura.hidden=toggle.getAttribute('aria-pressed')==='false'});
 })();
 </script></body></html>
