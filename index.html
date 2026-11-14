@@ -466,13 +466,13 @@ sync();setInterval(sync,250);
  const admin=document.createElement('button');admin.id='ronova-admin-button';admin.type='button';admin.textContent='⚙ Часы';admin.setAttribute('aria-label','Настройки часов');
  document.body.append(admin);
  const panel=document.createElement('dialog');panel.id='ronova-admin-dialog';
- panel.innerHTML='<h2>Настройки часов</h2><div id="ronova-admin-auth"><p>Вход администратора</p><input id="ronova-admin-email" type="email" autocomplete="username" aria-label="Электронная почта" placeholder="Электронная почта"><input id="ronova-admin-password" type="password" autocomplete="current-password" aria-label="Пароль" placeholder="Пароль"><button id="ronova-admin-login" type="button">Открыть</button><p id="ronova-admin-error" role="alert"></p></div><div id="ronova-admin-settings" hidden><p>Длительность испытания, минуты</p><input id="ronova-admin-duration" type="number" min="1" max="1440" step="1" value="120"><div class="admin-actions"><button id="ronova-admin-apply" type="button">Применить и начать заново</button><button id="ronova-admin-pause" type="button">Пауза</button><button id="ronova-admin-reset" type="button">Сбросить отсчёт</button></div><p id="ronova-admin-state" aria-live="polite"></p></div><p id="ronova-admin-message" role="status"></p><button id="ronova-admin-close" type="button">Закрыть</button>';
+ panel.innerHTML='<h2>Настройки часов</h2><div id="ronova-admin-auth"><p>Введите общий пароль</p><input id="ronova-admin-password" type="password" autocomplete="current-password" aria-label="Пароль" placeholder="Пароль"><button id="ronova-admin-login" type="button">Открыть</button><p id="ronova-admin-error" role="alert"></p></div><div id="ronova-admin-settings" hidden><p>Длительность испытания, минуты</p><input id="ronova-admin-duration" type="number" min="1" max="1440" step="1" value="120"><div class="admin-actions"><button id="ronova-admin-apply" type="button">Применить и начать заново</button><button id="ronova-admin-pause" type="button">Пауза</button><button id="ronova-admin-reset" type="button">Сбросить отсчёт</button></div><p id="ronova-admin-state" aria-live="polite"></p></div><p id="ronova-admin-message" role="status"></p><button id="ronova-admin-close" type="button">Закрыть</button>';
  document.body.append(panel);
  const $=id=>document.getElementById(id);
 
  const timer = $('timer');
  const password = $('ronova-admin-password');
- const email = $('ronova-admin-email');
+ const sharedLogin = 'timer-admin@ronova-prophecy.example.com';
  const login = $('ronova-admin-login');
  const minutes = $('ronova-admin-duration');
  const message = $('ronova-admin-message');
@@ -485,7 +485,7 @@ sync();setInterval(sync,250);
 
  admin.onclick = () => {
   panel.showModal();
-  if (!$('ronova-admin-auth').hidden) email.focus();
+  if (!$('ronova-admin-auth').hidden) password.focus();
  };
  $('ronova-admin-close').onclick = () => panel.close();
 
@@ -555,9 +555,9 @@ sync();setInterval(sync,250);
   const errorNode = $('ronova-admin-error');
   errorNode.textContent = '';
   try {
-   const {data, error} = await client.auth.signInWithPassword({email: email.value.trim(), password: password.value});
+   const {data, error} = await client.auth.signInWithPassword({email: sharedLogin, password: password.value});
    if (error) {
-    errorNode.textContent = error.status === 400 ? 'Проверь почту и пароль.' : 'Не удалось войти. Попробуй ещё раз.';
+    errorNode.textContent = error.status === 400 ? 'Проверь общий пароль.' : 'Не удалось войти. Попробуй ещё раз.';
     return;
    }
    if (data.user.app_metadata.ronova_admin !== true) {
@@ -574,9 +574,9 @@ sync();setInterval(sync,250);
    login.disabled = false;
   }
  };
- [email, password].forEach(input => input.addEventListener('keydown', event => {
+ password.addEventListener('keydown', event => {
   if (event.key === 'Enter') login.click();
- }));
+ });
 
  async function change(action){
   if (!state || busy || !connected) return;
