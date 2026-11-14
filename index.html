@@ -207,31 +207,38 @@ body:before{opacity:.25!important}
  #ronova-ost-frame{height:84px!important}
  #ronova-ost-player .ronova-ost-header{font-size:10px!important}
 }
+.binary-key{list-style:none;padding:0;max-height:12rem;overflow:auto;font:14px/1.7 monospace}#clue{overflow-wrap:anywhere}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
-<div class="timer" id="timer">—</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись символа, чтобы раскрыть тайну</p></main>
-<dialog id="puzzle"><button class="close" id="close" aria-label="Закрыть">×</button><h2 id="puzzleTitle">Загадка</h2><p id="clue"></p><form id="answerForm"><input id="answer" autocomplete="off" placeholder="Введи разгаданное слово" required><button class="action" type="submit">Раскрыть</button><p class="error" id="error" aria-live="polite"></p></form></dialog>
+<div class="timer" id="timer">—</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись рун, чтобы открыть загадку</p></main>
+<dialog id="puzzle"><button class="close" id="close" aria-label="Закрыть">×</button><h2 id="puzzleTitle">Загадка</h2><p id="clue"></p><div id="puzzle-aid"></div><form id="answerForm"><input id="answer" autocomplete="off" placeholder="Введи разгаданное слово" required><button class="action" type="submit">Раскрыть</button><p class="error" id="error" aria-live="polite"></p></form></dialog>
 <div class="expired" id="expired"><h2>Время истекло</h2><p>Чертоги Роновы закрыты.</p></div>
 <script>
 const text='В чертогах, где застыл последний вздох, выход откроется лишь тому, кто добровольно сотрет из сердца то, что греет память о здешнем мире';
+const russianAlphabet='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+const alphabetHint='Алфавит: '+russianAlphabet.toUpperCase().split('').join(' ')+'.';
+const numberHint='Замени каждое число буквой с таким номером: А = 1, Б = 2, …, Я = 33. '+alphabetHint;
+const caesarHint='Сдвинь каждую букву на 3 позиции назад по кругу. '+alphabetHint;
+const atbashHint='Замени первую букву алфавита последней, вторую предпоследней и так далее. '+alphabetHint;
+const binaryHint='Читай группы по два байта и сверяй каждую пару с таблицей ниже. ';
 const puzzles={
 'чертогах':['Анаграмма','ГОРТЕЧАХ'],
 'застыл':['Масонский шифр','Расшифруй слово с помощью масонской решётки.'],
-'последний':['Цифровая замена','17-16-19-13-6-5-15-10-11'],
+'последний':['Цифровая замена',numberHint+' 17-16-19-13-6-5-15-10-11'],
 'вздох':['Анаграмма','ХОДВЗ'],
-'выход':['Шифр Цезаря','ЁЮШСЗ'],
-'откроется':['Двоичный код','Расшифруй двоичную последовательность UTF-8: '+binary('откроется')],
+'выход':['Шифр Цезаря',caesarHint+' ЕЮШСЖ'],
+'откроется':['Двоичный код',binaryHint+binary('откроется')],
 'лишь':['Азбука Морзе','.-.. .. ---- -..- (русская азбука Морзе)'],
-'добровольно':['Двоичный код','Расшифруй двоичную последовательность UTF-8: '+binary('добровольно')],
-'сотрет':['Шифр Цезаря','ФСХУИЦ'],
-'сердца':['Атбаш','Расшифруй по русскому алфавиту Атбаш: '+atbash('сердца')],
+'добровольно':['Двоичный код',binaryHint+binary('добровольно')],
+'сотрет':['Шифр Цезаря',caesarHint+' ФСХУИХ'],
+'сердца':['Атбаш',atbashHint+' '+atbash('сердца')],
 'греет':['Азбука Морзе','--. .-. . . - (русская азбука Морзе)'],
-'память':['Атбаш','Расшифруй по русскому алфавиту Атбаш: '+atbash('память')],
-'здешнем':['Цифровая замена','9-5-6-26-15-6-14'],
+'память':['Атбаш',atbashHint+' '+atbash('память')],
+'здешнем':['Цифровая замена',numberHint+' 9-5-6-26-15-6-14'],
 'мире':['Анаграмма','РИМЕ']};
 function binary(s){return [...new TextEncoder().encode(s)].map(x=>x.toString(2).padStart(8,'0')).join(' ')}
-function atbash(s){let a='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';return [...s].map(c=>a.includes(c)?a[a.length-1-a.indexOf(c)]:c).join('')}
+function atbash(s){const a=russianAlphabet;return [...s].map(c=>a.includes(c)?a[a.length-1-a.indexOf(c)]:c).join('')}
 const glyphs=['ᚨ','ᛒ','ᚲ','ᛞ','ᛖ','ᚠ','ᚷ','ᚺ','ᛁ','ᛃ','ᚴ','ᛚ','ᛗ','ᚾ','ᛟ','ᛈ','ᛩ','ᚱ','ᛋ','ᛏ','ᚢ','ᚡ','ᚹ','ᛪ','ᛦ','ᛉ'];function symbols(w){return [...w].map(c=>'<span class="fallback">'+glyphs[(c.toLowerCase().charCodeAt(0)+5)%glyphs.length]+'</span>').join('')}
 const solvedKey='ronova-solved-v1';
 let solved=new Set(JSON.parse(localStorage.getItem(solvedKey)||'[]')),active=null;
@@ -384,13 +391,13 @@ const sound=document.getElementById('ronova-sound');if(sound){sound.title='Ав�
 
 /* Working pigpen substitution with a visible decoding key. */
 (function(){
-const alphabet='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+const alphabet=russianAlphabet;
 function glyph(letter){
  const n=alphabet.indexOf(letter.toLowerCase());if(n<0)return '';
  const cell=n%9,row=Math.floor(cell/3),col=cell%3;
- let d='';
- if(col===0)d+='M27 4 V46 ';if(col===1)d+='M4 4 V46 M46 4 V46 ';if(col===2)d+='M4 4 V46 ';
- if(row===0)d+='M4 27 H46 ';if(row===1)d+='M4 4 H46 M4 46 H46 ';if(row===2)d+='M4 27 H46 ';
+ const vertical=['M46 4 V46','M4 4 V46 M46 4 V46','M4 4 V46'];
+ const horizontal=['M4 46 H46','M4 4 H46 M4 46 H46','M4 4 H46'];
+ let d=vertical[col]+' '+horizontal[row];
  let dot=n>=9&&n<18;let cross=n>=18;
  if(cross){const k=n-18;const a=(k%8)*Math.PI/4;d='M25 25 L'+(25+21*Math.cos(a)).toFixed(1)+' '+(25+21*Math.sin(a)).toFixed(1)+' M25 25 L'+(25+21*Math.cos(a+Math.PI/2)).toFixed(1)+' '+(25+21*Math.sin(a+Math.PI/2)).toFixed(1);dot=n>=26}
  return '<svg viewBox="0 0 50 50" role="img" aria-label="Символ шифра"><path d="'+d+'" fill="none" stroke="#f27888" stroke-width="3" stroke-linecap="square"/>'+(dot?'<circle cx="25" cy="25" r="3.5" fill="#ffd6ce"/>':'')+'</svg>';
@@ -402,12 +409,26 @@ function drawPigpen(word){
 }
 const oldOpen=openPuzzle;
 openPuzzle=function(word){
- oldOpen(word);
+ const aid=document.getElementById('puzzle-aid');
+ aid.replaceChildren();
  if(word==='застыл'){
-  document.getElementById('clue').textContent='Масонский шифр: расшифруй последовательность символов.';
-  const div=document.createElement('div');div.id='pigpen-puzzle';div.innerHTML=drawPigpen(word);
-  document.getElementById('clue').after(div);
- }else document.getElementById('pigpen-puzzle')?.remove();
+  aid.innerHTML=drawPigpen(word);
+ }
+ if(puzzles[word][0]==='Двоичный код'){
+  const key=document.createElement('details');
+  const summary=document.createElement('summary');
+  summary.textContent='Показать таблицу UTF-8';
+  const rows=document.createElement('ul');
+  rows.className='binary-key';
+  for(const letter of russianAlphabet){
+   const row=document.createElement('li');
+   row.textContent=letter+' = '+binary(letter);
+   rows.append(row);
+  }
+  key.append(summary,rows);
+  aid.append(key);
+ }
+ oldOpen(word);
 };
 })();
 
