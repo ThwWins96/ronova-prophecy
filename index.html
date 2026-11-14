@@ -210,7 +210,7 @@ body:before{opacity:.25!important}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
-<div class="timer" id="timer">02:00:00</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись символа, чтобы раскрыть тайну</p></main>
+<div class="timer" id="timer">—</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись символа, чтобы раскрыть тайну</p></main>
 <dialog id="puzzle"><button class="close" id="close" aria-label="Закрыть">×</button><h2 id="puzzleTitle">Загадка</h2><p id="clue"></p><form id="answerForm"><input id="answer" autocomplete="off" placeholder="Введи разгаданное слово" required><button class="action" type="submit">Раскрыть</button><p class="error" id="error" aria-live="polite"></p></form></dialog>
 <div class="expired" id="expired"><h2>Время истекло</h2><p>Чертоги Роновы закрыты.</p></div>
 <script>
@@ -233,14 +233,13 @@ const puzzles={
 function binary(s){return [...new TextEncoder().encode(s)].map(x=>x.toString(2).padStart(8,'0')).join(' ')}
 function atbash(s){let a='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';return [...s].map(c=>a.includes(c)?a[a.length-1-a.indexOf(c)]:c).join('')}
 const glyphs=['ᚨ','ᛒ','ᚲ','ᛞ','ᛖ','ᚠ','ᚷ','ᚺ','ᛁ','ᛃ','ᚴ','ᛚ','ᛗ','ᚾ','ᛟ','ᛈ','ᛩ','ᚱ','ᛋ','ᛏ','ᚢ','ᚡ','ᚹ','ᛪ','ᛦ','ᛉ'];function symbols(w){return [...w].map(c=>'<span class="fallback">'+glyphs[(c.toLowerCase().charCodeAt(0)+5)%glyphs.length]+'</span>').join('')}
-const key='ronova-start-v1',solvedKey='ronova-solved-v1',now=Date.now();let started=Number(localStorage.getItem(key));if(!started||started>now){started=now;localStorage.setItem(key,String(started))}
+const solvedKey='ronova-solved-v1';
 let solved=new Set(JSON.parse(localStorage.getItem(solvedKey)||'[]')),active=null;
 const prop=document.getElementById('prophecy'),dialog=document.getElementById('puzzle');
 function render(){prop.innerHTML='';text.split(/(\s+)/).forEach((part)=>{if(/^\s+$/.test(part)){prop.append(document.createTextNode(part));return}let word=part.toLowerCase().replace(/[^а-яё]/g,'');if(puzzles[word]&&!solved.has(word)){let b=document.createElement('button');b.className='secret';b.title='Открыть загадку';b.setAttribute('aria-label','Зашифрованное слово');b.innerHTML=symbols(word)+(part.endsWith(',')?',':'');b.onclick=()=>openPuzzle(word);prop.append(b)}else{let span=document.createElement('span');span.className='word';span.textContent=part;prop.append(span)}})}
 function openPuzzle(word){active=word;document.getElementById('puzzleTitle').textContent='Испытание Роновы';document.getElementById('clue').textContent=puzzles[word][0]+': '+puzzles[word][1];document.getElementById('answer').value='';document.getElementById('error').textContent='';dialog.showModal()}
 document.getElementById('close').onclick=()=>dialog.close();document.getElementById('answerForm').onsubmit=e=>{e.preventDefault();let answer=document.getElementById('answer').value.trim().toLowerCase().replace(/ё/g,'е');if(answer===active.replace(/ё/g,'е')){solved.add(active);localStorage.setItem(solvedKey,JSON.stringify([...solved]));dialog.close();render()}else document.getElementById('error').textContent='Ответ неверен. Попробуй ещё.'};
 const roman=['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];roman.forEach((v,i)=>{let s=document.createElement('span');s.style.setProperty('--i',i);s.textContent=v;document.getElementById('clock').append(s)});
-function tick(){let remaining=Math.max(0,7200000-(Date.now()-started)),s=Math.ceil(remaining/1000);document.getElementById('timer').textContent=[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');document.getElementById('minute').style.transform='rotate('+((7200000-remaining)/7200000*720)+'deg)';document.getElementById('hour').style.transform='rotate('+((7200000-remaining)/7200000*60)+'deg)';if(!remaining){dialog.close();document.getElementById('expired').style.display='flex'}}tick();setInterval(tick,1000);
 const eyePositions=[[4,12,125,-15],[28,8,100,12],[68,8,125,-20],[86,20,140,10],[8,46,170,10],[72,42,95,-14],[89,57,130,20],[22,76,105,-18],[60,78,145,10],[44,26,250,-5],[2,85,85,10],[79,85,110,-10]];
 const eyes=document.getElementById('eyes');eyePositions.forEach(([x,y,w,r],i)=>{let e=document.createElement('div');e.className='eye';e.style.cssText='left:'+x+'%;top:'+y+'%;--w:'+w+'px;--r:'+r+'deg;--d:'+(i*.7)+'s';eyes.append(e)});
 render();
@@ -320,18 +319,6 @@ svg.innerHTML='<defs><filter id="redglow" x="-100%" y="-100%" width="300%" heigh
 +'<g id="ronova-minute-rotor" transform="rotate(0 '+cx+' '+cy+')"><path d="M'+cx+' '+cy+' L'+(cx+124)+' '+(cy+96)+' L'+(cx+104)+' '+(cy+84)+' L'+(cx+95)+' '+(cy+90)+' L'+(cx+74)+' '+(cy+60)+' L'+(cx+63)+' '+(cy+62)+'Z" fill="#d91c2f" stroke="#ff394c" stroke-width="1.1" filter="url(#redglow)"/></g>'
 +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="#f32639" filter="url(#redglow)"/>';
 document.getElementById('clock').prepend(svg);
-const begin=Number(localStorage.getItem('ronova-start-v1'))||Date.now();
-function animateClock(){
- const elapsed=Math.max(0,Date.now()-begin),progress=Math.min(1,elapsed/7200000);
- const minute=document.getElementById('ronova-minute-rotor'),hour=document.getElementById('ronova-hour-rotor');
- if(!minute||!hour)return;
- // One full minute-hand revolution every 60 minutes, linked to the actual countdown.
- const minuteAngle=(elapsed/60000*6)%360;
- const hourAngle=(elapsed/3600000*30)%360;
- minute.setAttribute('transform','rotate('+minuteAngle+' 295 210)');
- hour.setAttribute('transform','rotate('+hourAngle+' 295 210)');
-}
-animateClock();setInterval(animateClock,250);
 })();
 /* Atmosphere, particles, and original synthesized ambient audio; user gesture required. */
 (function(){
@@ -474,46 +461,149 @@ function sync(){
 sync();setInterval(sync,250);
 })();
 
-/* Password-gated timer administration. Browser-local, not server security. */
-(function(){
+/* Shared countdown and password sign-in. */
+(async function(){
  const admin=document.createElement('button');admin.id='ronova-admin-button';admin.type='button';admin.textContent='⚙ Часы';admin.setAttribute('aria-label','Настройки часов');
  document.body.append(admin);
  const panel=document.createElement('dialog');panel.id='ronova-admin-dialog';
- panel.innerHTML='<h2>Настройки часов</h2><div id="ronova-admin-auth"><p>Введите пароль администратора</p><input id="ronova-admin-password" type="password" inputmode="numeric" autocomplete="off" placeholder="Пароль"><button id="ronova-admin-login" type="button">Открыть</button><p id="ronova-admin-error" role="alert"></p></div><div id="ronova-admin-settings" hidden><p>Длительность испытания, минуты</p><input id="ronova-admin-duration" type="number" min="1" max="1440" step="1" value="120"><div class="admin-actions"><button id="ronova-admin-apply" type="button">Применить и начать заново</button><button id="ronova-admin-pause" type="button">Пауза</button><button id="ronova-admin-reset" type="button">Сбросить отсчёт</button></div><p id="ronova-admin-state" aria-live="polite"></p></div><button id="ronova-admin-close" type="button">Закрыть</button>';
+ panel.innerHTML='<h2>Настройки часов</h2><div id="ronova-admin-auth"><p>Вход администратора</p><input id="ronova-admin-email" type="email" autocomplete="username" aria-label="Электронная почта" placeholder="Электронная почта"><input id="ronova-admin-password" type="password" autocomplete="current-password" aria-label="Пароль" placeholder="Пароль"><button id="ronova-admin-login" type="button">Открыть</button><p id="ronova-admin-error" role="alert"></p></div><div id="ronova-admin-settings" hidden><p>Длительность испытания, минуты</p><input id="ronova-admin-duration" type="number" min="1" max="1440" step="1" value="120"><div class="admin-actions"><button id="ronova-admin-apply" type="button">Применить и начать заново</button><button id="ronova-admin-pause" type="button">Пауза</button><button id="ronova-admin-reset" type="button">Сбросить отсчёт</button></div><p id="ronova-admin-state" aria-live="polite"></p></div><p id="ronova-admin-message" role="status"></p><button id="ronova-admin-close" type="button">Закрыть</button>';
  document.body.append(panel);
  const $=id=>document.getElementById(id);
- const durationKey='ronova-duration-v2',deadlineKey='ronova-deadline-v2',pausedKey='ronova-paused-remaining-v2';
- let duration=Number(localStorage.getItem(durationKey))||120;
- let deadline=Number(localStorage.getItem(deadlineKey));
- let paused=Number(localStorage.getItem(pausedKey))||0;
- if(!deadline&&!paused){deadline=started+duration*60000;localStorage.setItem(deadlineKey,String(deadline))}
- function remaining(){return paused||Math.max(0,deadline-Date.now())}
- function update(){
-  const rem=remaining(),seconds=Math.ceil(rem/1000);
-  $('timer').textContent=[Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(x=>String(x).padStart(2,'0')).join(':');
-  const expired=$('expired');expired.style.display=rem<=0?'flex':'none';
-  if(rem<=0&&dialog.open)dialog.close();
-  $('ronova-admin-pause').textContent=paused?'Продолжить':'Пауза';
-  $('ronova-admin-state').textContent=paused?'Отсчёт приостановлен':'Осталось '+$('timer').textContent;
+
+ const timer = $('timer');
+ const password = $('ronova-admin-password');
+ const email = $('ronova-admin-email');
+ const login = $('ronova-admin-login');
+ const minutes = $('ronova-admin-duration');
+ const message = $('ronova-admin-message');
+ const pause = $('ronova-admin-pause');
+ const controls = [$('ronova-admin-apply'), pause, $('ronova-admin-reset')];
+ let state;
+ let busy = false;
+ let signingIn = false;
+ let connected = false;
+
+ admin.onclick = () => {
+  panel.showModal();
+  if (!$('ronova-admin-auth').hidden) email.focus();
+ };
+ $('ronova-admin-close').onclick = () => panel.close();
+
+ function render(){
+  controls.forEach(button => { button.disabled = busy || !connected || !state; });
+  if (!state) return;
+  const paused = state.paused_ms !== null;
+  const remaining = paused ? state.paused_ms : Math.max(0, Date.parse(state.deadline) - Date.now());
+  const seconds = Math.ceil(remaining / 1000);
+  timer.textContent = [Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), seconds % 60]
+   .map(value => String(value).padStart(2, '0')).join(':');
+  $('expired').style.display = remaining <= 0 ? 'flex' : 'none';
+  if (remaining <= 0 && dialog.open) dialog.close();
+  pause.textContent = paused ? 'Продолжить' : 'Пауза';
+  pause.disabled ||= remaining <= 0;
+  $('ronova-admin-state').textContent = paused ? 'Отсчёт приостановлен' : 'Осталось ' + timer.textContent;
  }
- // Replace legacy tick function so the existing interval uses configurable deadline.
- tick=update;
- $('ronova-admin-duration').value=duration;
- admin.onclick=()=>{panel.showModal();$('ronova-admin-password').focus()};
- $('ronova-admin-close').onclick=()=>panel.close();
- $('ronova-admin-login').onclick=()=>{
-  if($('ronova-admin-password').value!=='1818'){$('ronova-admin-error').textContent='Неверный пароль';return}
-  $('ronova-admin-error').textContent='';$('ronova-admin-auth').hidden=true;$('ronova-admin-settings').hidden=false;
+
+ function accept(next){
+  if (!next || (state && next.revision < state.revision)) return;
+  if (!state || next.duration_minutes !== state.duration_minutes) minutes.value = next.duration_minutes;
+  state = next;
+  connected = true;
+  render();
+ }
+
+ render();
+ let client;
+ try {
+  const {createClient} = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/+esm');
+  client = createClient('https://ztardlgezvfcguhwtaek.supabase.co', 'sb_publishable_qHGZhMdqMur50r3e-BxPUQ_b7E30XwL', {
+   auth: {persistSession: false, detectSessionInUrl: false}
+  });
+ } catch {
+  timer.textContent = 'Таймер недоступен';
+  message.textContent = 'Не удалось подключиться. Перезагрузи страницу.';
+  login.disabled = true;
+  return;
+ }
+
+ async function refresh(){
+  const {data, error} = await client.from('ronova_countdown').select().eq('id', 1).single();
+  if (!error) {
+   accept(data);
+   timer.removeAttribute('title');
+   return;
+  }
+  connected = false;
+  timer.title = 'Соединение потеряно. Повторяем подключение.';
+  if (!state) timer.textContent = 'Таймер недоступен';
+  render();
+ }
+
+ client.channel('ronova-countdown')
+  .on('postgres_changes', {event:'UPDATE', schema:'public', table:'ronova_countdown', filter:'id=eq.1'}, event => accept(event.new))
+  .subscribe(status => { if (status === 'SUBSCRIBED') void refresh(); });
+ void refresh();
+ setInterval(refresh, 15000);
+ setInterval(render, 250);
+ window.addEventListener('online', refresh);
+ document.addEventListener('visibilitychange', () => { if (!document.hidden) void refresh(); });
+
+ login.onclick = async () => {
+  if (signingIn) return;
+  signingIn = true;
+  login.disabled = true;
+  const errorNode = $('ronova-admin-error');
+  errorNode.textContent = '';
+  try {
+   const {data, error} = await client.auth.signInWithPassword({email: email.value.trim(), password: password.value});
+   if (error) {
+    errorNode.textContent = error.status === 400 ? 'Проверь почту и пароль.' : 'Не удалось войти. Попробуй ещё раз.';
+    return;
+   }
+   if (data.user.app_metadata.ronova_admin !== true) {
+    await client.auth.signOut({scope:'local'});
+    errorNode.textContent = 'У этой учётной записи нет доступа к настройкам.';
+    return;
+   }
+   $('ronova-admin-auth').hidden = true;
+   $('ronova-admin-settings').hidden = false;
+   minutes.focus();
+  } finally {
+   password.value = '';
+   signingIn = false;
+   login.disabled = false;
+  }
  };
- $('ronova-admin-password').addEventListener('keydown',e=>{if(e.key==='Enter')$('ronova-admin-login').click()});
- function restart(){paused=0;localStorage.removeItem(pausedKey);deadline=Date.now()+duration*60000;localStorage.setItem(deadlineKey,String(deadline));localStorage.setItem('ronova-start-v1',String(Date.now()));update()}
- $('ronova-admin-apply').onclick=()=>{duration=Math.max(1,Math.min(1440,Number($('ronova-admin-duration').value)||120));localStorage.setItem(durationKey,String(duration));restart()};
- $('ronova-admin-reset').onclick=restart;
- $('ronova-admin-pause').onclick=()=>{
-  if(paused){deadline=Date.now()+paused;paused=0;localStorage.removeItem(pausedKey);localStorage.setItem(deadlineKey,String(deadline))}
-  else{paused=Math.max(1,remaining());localStorage.setItem(pausedKey,String(paused))}
-  update();
- };
- update();setInterval(update,1000);
+ [email, password].forEach(input => input.addEventListener('keydown', event => {
+  if (event.key === 'Enter') login.click();
+ }));
+
+ async function change(action){
+  if (!state || busy || !connected) return;
+  if (action === 'apply' && !minutes.reportValidity()) return;
+  if (action === 'apply' && !minutes.value) {
+   message.textContent = 'Укажи длительность от 1 до 1440 минут.';
+   return;
+  }
+  busy = true;
+  message.textContent = '';
+  render();
+  try {
+   const {data, error} = await client.rpc('ronova_change_timer', {
+    action, minutes: action === 'apply' ? Number(minutes.value) : state.duration_minutes, expected_revision: state.revision
+   });
+   if (error) throw error;
+   accept(data);
+  } catch {
+   await refresh();
+   message.textContent = 'Изменение не сохранено. Проверь текущее состояние и повтори.';
+  } finally {
+   busy = false;
+   render();
+  }
+ }
+ $('ronova-admin-apply').onclick = () => change('apply');
+ $('ronova-admin-reset').onclick = () => change('reset');
+ pause.onclick = () => change(state?.paused_ms === null ? 'pause' : 'resume');
 })();
 </script></body></html>
