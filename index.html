@@ -223,12 +223,40 @@ body:before{opacity:.25!important}
 #ronova-extra-aura i::after{content:"";position:absolute;left:49%;top:8%;width:1px;height:92%;background:linear-gradient(#ffac9e,#d64b64 65%,#70203b);transform:rotate(3deg);transform-origin:top}
 @keyframes ronovaFeatherFloat{0%{transform:translate3d(0,0,0) rotate(-24deg);opacity:0}12%{opacity:.65}30%{transform:translate3d(38px,-32vh,0) rotate(18deg)}60%{transform:translate3d(-24px,-66vh,0) rotate(-32deg);opacity:.7}85%{opacity:.45}100%{transform:translate3d(30px,calc(-100vh - 90px),0) rotate(28deg);opacity:0}}
 @media(prefers-reduced-motion:reduce){#ronova-extra-aura i{animation:none}}
+
+#timer{display:flex;align-items:center;justify-content:center;gap:clamp(3px,.7vw,7px);padding:12px 5px;background:transparent;border:0;border-radius:0;box-shadow:none;text-shadow:none!important}
+.digital-digit{display:block;position:relative;width:clamp(20px,4.8vw,37px);height:clamp(36px,8.6vw,66px)}
+.segment{position:absolute;background:#441017;opacity:.18}
+.segment.lit{background:#fff0be;opacity:1;filter:drop-shadow(0 0 3px #ff202b) drop-shadow(0 0 8px #ff142b)}
+.segment.a,.segment.d,.segment.g{height:8%;width:76%;left:12%;clip-path:polygon(10% 0,90% 0,100% 50%,90% 100%,10% 100%,0 50%)}
+.segment.a{top:0}.segment.g{top:46%}.segment.d{bottom:0}
+.segment.b,.segment.c,.segment.e,.segment.f{width:12%;height:42%;clip-path:polygon(50% 0,100% 12%,100% 88%,50% 100%,0 88%,0 12%)}
+.segment.b{right:0;top:5%}.segment.c{right:0;bottom:5%}.segment.e{left:0;bottom:5%}.segment.f{left:0;top:5%}
+.digital-colon{width:5px;height:42px;position:relative;margin:0 3px}
+.digital-colon:before,.digital-colon:after{content:"";position:absolute;width:5px;height:5px;left:0;border-radius:50%;background:#fff0be;box-shadow:0 0 8px 3px #ff173e}
+.digital-colon:before{top:10px}.digital-colon:after{bottom:10px}
+#expired{z-index:100;background:radial-gradient(ellipse at center,#420814,#070105 70%);overflow:hidden;padding:24px}
+#ronova-admin-button{z-index:110}
+.final-eye{width:min(95vw,1400px);height:min(50vw,60vh);position:absolute;top:12vh;left:50%;translate:-50% 0;border-radius:80% 10% 80% 10%;transform:rotate(45deg) scaleY(1);background:radial-gradient(ellipse,#fc7050,#6d1128 45%,#14040a 73%);border:3px solid #df3548;box-shadow:0 0 70px #fc234c88,inset 0 0 65px #000;animation:finalEyeOpen 2.5s ease-out both}
+.final-iris{position:absolute;left:50%;top:50%;width:38%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:radial-gradient(ellipse,#fff8c6 0 3%,#0b0108 4% 15%,#f5473a 16% 24%,#7b112d 27% 34%,#ff835b 35% 37%,#350719 40% 55%,#17030d 65%);box-shadow:0 0 40px #ff583d}
+.final-message{z-index:1;position:absolute;bottom:9vh;width:min(90vw,850px);font:clamp(20px,3vw,36px)/1.6 Georgia;color:#ffe0d5;text-align:center;text-shadow:0 2px 12px #000;animation:finalText 3s ease both}
+@keyframes finalEyeOpen{from{opacity:0;transform:rotate(0) scaleY(.015)}to{opacity:1;transform:rotate(0) scaleY(1)}}
+@keyframes finalText{0%,45%{opacity:0;translate:0 15px}100%{opacity:1;translate:0 0}}
+#expired[style*="flex"]~#ronova-ost-player{visibility:hidden}
+#ronova-admin-dialog{max-height:90dvh;overflow:auto}
+#puzzle-controls details{border-top:1px solid #713341;padding:12px 0}
+#puzzle-controls summary{cursor:pointer;color:#ffb5ab}
+#puzzle-controls label{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:15px}
+#puzzle-controls input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:#c83952}
+#puzzle-controls select{max-width:100%;background:#260f1c;color:#fff;padding:8px;border:1px solid #934258}
+#prophecy [hidden],#puzzle [hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){.final-eye,.final-message{animation:none}}
 </style></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
 <div class="timer" id="timer">—</div><h1>Пророчество Роновы</h1><div class="prophecy" id="prophecy"></div><p class="note">Коснись рун, чтобы открыть загадку</p></main>
 <dialog id="puzzle"><button class="close" id="close" aria-label="Закрыть">×</button><h2 id="puzzleTitle">Загадка</h2><p id="clue"></p><div id="puzzle-aid"></div><form id="answerForm"><input id="answer" autocomplete="off" placeholder="Введи разгаданное слово" required><button class="action" type="submit">Раскрыть</button><p class="error" id="error" aria-live="polite"></p></form></dialog>
-<div class="expired" id="expired"><h2>Время истекло</h2><p>Чертоги Роновы закрыты.</p></div>
+<div class="expired" id="expired" role="status"><div class="final-eye" aria-hidden="true"><div class="final-iris"></div></div><p class="final-message">ваш разум душа и судьба были погребены в тьму. Вы вернётесь но метка на вас останется</p></div>
 <script>
 const text='В чертогах, где застыл последний вздох, выход откроется лишь тому, кто добровольно сотрет из сердца то, что греет память о здешнем мире';
 const russianAlphabet='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
@@ -258,7 +286,7 @@ const glyphs=['ᚨ','ᛒ','ᚲ','ᛞ','ᛖ','ᚠ','ᚷ','ᚺ','ᛁ','ᛃ','ᚴ',
 const solvedKey='ronova-solved-v1';
 let solved=new Set(JSON.parse(localStorage.getItem(solvedKey)||'[]')),active=null;
 const prop=document.getElementById('prophecy'),dialog=document.getElementById('puzzle');
-function render(){prop.innerHTML='';text.split(/(\s+)/).forEach((part)=>{if(/^\s+$/.test(part)){prop.append(document.createTextNode(part));return}let word=part.toLowerCase().replace(/[^а-яё]/g,'');if(puzzles[word]&&!solved.has(word)){let b=document.createElement('button');b.className='secret';b.title='Открыть загадку';b.setAttribute('aria-label','Зашифрованное слово');b.innerHTML=symbols(word)+(part.endsWith(',')?',':'');b.onclick=()=>openPuzzle(word);prop.append(b)}else{let span=document.createElement('span');span.className='word';span.textContent=part;prop.append(span)}})}
+function render(){prop.innerHTML='';text.split(/(\s+)/).forEach((part)=>{if(/^\s+$/.test(part)){prop.append(document.createTextNode(part));return}let word=part.toLowerCase().replace(/[^а-яё]/g,'');if(puzzles[word]&&!solved.has(word)){let b=document.createElement('button');b.className='secret';b.title='Открыть загадку';b.setAttribute('aria-label','Зашифрованное слово');b.innerHTML=symbols(word)+(part.endsWith(',')?',':'');b.dataset.word=word;b.onclick=()=>openPuzzle(word);prop.append(b)}else{let span=document.createElement('span');span.className='word';span.dataset.word=word;span.textContent=part;prop.append(span)}})}
 function openPuzzle(word){active=word;document.getElementById('puzzleTitle').textContent='Испытание Роновы';document.getElementById('clue').textContent=puzzles[word][0]+': '+puzzles[word][1];document.getElementById('answer').value='';document.getElementById('error').textContent='';dialog.showModal()}
 document.getElementById('close').onclick=()=>dialog.close();document.getElementById('answerForm').onsubmit=e=>{e.preventDefault();let answer=document.getElementById('answer').value.trim().toLowerCase().replace(/ё/g,'е');if(answer===active.replace(/ё/g,'е')){solved.add(active);localStorage.setItem(solvedKey,JSON.stringify([...solved]));dialog.close();render()}else document.getElementById('error').textContent='Ответ неверен. Попробуй ещё.'};
 const roman=['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];roman.forEach((v,i)=>{let s=document.createElement('span');s.style.setProperty('--i',i);s.textContent=v;document.getElementById('clock').append(s)});
@@ -531,13 +559,13 @@ sync();setInterval(sync,250);
   const paused = state.paused_ms !== null;
   const remaining = paused ? state.paused_ms : Math.max(0, Date.parse(state.deadline) - Date.now());
   const seconds = Math.ceil(remaining / 1000);
-  timer.textContent = [Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), seconds % 60]
-   .map(value => String(value).padStart(2, '0')).join(':');
+  const timeLabel = [Math.floor(seconds / 3600), Math.floor(seconds % 3600 / 60), seconds % 60].map(value => String(value).padStart(2, '0')).join(':');
+  drawDigitalTimer(timer,timeLabel);
   $('expired').style.display = remaining <= 0 ? 'flex' : 'none';
   if (remaining <= 0 && dialog.open) dialog.close();
   pause.textContent = paused ? 'Продолжить' : 'Пауза';
   pause.disabled ||= remaining <= 0;
-  $('ronova-admin-state').textContent = paused ? 'Отсчёт приостановлен' : 'Осталось ' + timer.textContent;
+  $('ronova-admin-state').textContent = paused ? 'Отсчёт приостановлен' : 'Осталось ' + timeLabel;
  }
 
  function accept(next){
@@ -561,6 +589,8 @@ sync();setInterval(sync,250);
   login.disabled = true;
   return;
  }
+
+ setupPuzzleControls(client);
 
  async function refresh(){
   const {data, error} = await client.from('ronova_countdown').select().eq('id', 1).single();
@@ -722,4 +752,136 @@ sync();setInterval(sync,250);
  const toggle=document.getElementById('ronova-effects');
  toggle.addEventListener('click',()=>{aura.hidden=toggle.getAttribute('aria-pressed')==='false'});
 })();
+
+function drawDigitalTimer(node,label){
+ if(node.dataset.time===label)return;
+ node.dataset.time=label;
+ node.setAttribute('aria-label',label);
+ const segments=['abcdef','bc','abdeg','abcdg','bcfg','acdfg','acdefg','abc','abcdefg','abcdfg'];
+ const fragment=document.createDocumentFragment();
+ for(const char of label){
+  const digit=document.createElement('span');
+  digit.setAttribute('aria-hidden','true');
+  if(char===':'){digit.className='digital-colon';}
+  else{
+   digit.className='digital-digit';
+   for(const name of 'abcdefg'){
+    const bar=document.createElement('i');
+    bar.className='segment '+name+(segments[Number(char)].includes(name)?' lit':'');
+    digit.append(bar);
+   }
+  }
+  fragment.append(digit);
+ }
+ node.replaceChildren(fragment);
+}
+function setupPuzzleControls(client){
+ const rows=new Map();
+ const controls=new Map();
+ const defaults={mode:'puzzle',show_cipher:true,show_hint:true,show_alphabet:true,show_explanation:true,revision:0};
+ const host=document.createElement('section');
+ host.id='puzzle-controls';
+ const heading=document.createElement('h3');heading.textContent='Управление загадками';
+ const status=document.createElement('p');status.setAttribute('role','status');
+ host.append(heading,status);
+ document.getElementById('ronova-admin-settings').append(host);
+ function applyVisibility(){
+  for(const node of document.querySelectorAll('#prophecy [data-word]')){
+   const word=node.dataset.word, config=rows.get(word)||defaults;
+   node.hidden=config.mode==='hidden';
+   if(config.mode==='revealed'&&node.tagName==='BUTTON'){
+    node.textContent=word;
+    node.disabled=true;
+   }
+  }
+  if(!dialog.open||!active)return;
+  const config=rows.get(active)||defaults;
+  if(config.mode!=='puzzle'){dialog.close();return;}
+  document.getElementById('clue').hidden=!config.show_cipher;
+  const selectors=[
+   ['.pigpen-cipher','show_cipher'],
+   ['.cipher-hint','show_hint'],
+   ['.cipher-alphabet, #puzzle-aid details','show_alphabet'],
+   ['.cipher-explanation, .pigpen-hint','show_explanation']
+  ];
+  for(const [selector,key] of selectors){
+   document.querySelectorAll(selector).forEach(node=>{node.hidden=!config[key];});
+  }
+ }
+ const originalRender=render;
+ render=function(){originalRender();applyVisibility();};
+ const originalOpen=openPuzzle;
+ openPuzzle=function(word){
+  const config=rows.get(word)||defaults;
+  if(config.mode!=='puzzle')return;
+  originalOpen(word);
+  const note=document.querySelector('.cipher-explanation');
+  if(puzzles[word][0]==='Шифр Цезаря'&&note){
+   note.textContent='Все буквы сдвинуты на одинаковое число позиций. Алфавит замыкается в круг.';
+   const hint=document.createElement('p');
+   hint.className='cipher-hint';hint.textContent='Подсказка — минусовое число смерти';
+   note.before(hint);
+  }
+  applyVisibility();
+ };
+ function accept(row){
+  if(!puzzles[row.word]||(rows.has(row.word)&&rows.get(row.word).revision>row.revision))return;
+  rows.set(row.word,row);
+  const fields=controls.get(row.word);
+  if(fields) for(const [key,field] of Object.entries(fields)){
+   if(field.type==='checkbox')field.checked=row[key];else field.value=row[key];
+   field.disabled=false;
+  }
+  render();
+ }
+ async function refresh(){
+  const {data,error}=await client.from('ronova_puzzles').select();
+  if(error){status.textContent='Не удалось загрузить настройки. Повторяем подключение.';return;}
+  data.forEach(accept);
+ }
+ const labels={show_cipher:'Шифротекст',show_hint:'Подсказка',show_alphabet:'Алфавит / ключ',show_explanation:'Пояснение'};
+ for(const [word,[type]] of Object.entries(puzzles)){
+  const details=document.createElement('details');
+  const title=document.createElement('summary');title.textContent=word+' — '+type;
+  details.append(title);
+  const fields={};
+  const label=document.createElement('label');label.textContent='Отображение слова';
+  const select=document.createElement('select');
+  for(const [value,text] of [['puzzle','Загадка'],['hidden','Скрыть слово'],['revealed','Раскрыть ответ всем']]){
+   const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);
+  }
+  label.append(select);details.append(label);fields.mode=select;
+  for(const [key,text] of Object.entries(labels)){
+   const line=document.createElement('label');
+   const input=document.createElement('input');input.type='checkbox';input.checked=true;
+   line.append(input,document.createTextNode(text));details.append(line);fields[key]=input;
+  }
+  for(const [key,input] of Object.entries(fields)){
+   input.disabled=true;
+   input.addEventListener('change',async()=>{
+    const previous=rows.get(word);
+    if(!previous)return;
+    Object.values(fields).forEach(field=>{field.disabled=true;});
+    status.textContent='Сохранение…';
+    const value=input.type==='checkbox'?input.checked:input.value;
+    try{
+     const {data,error}=await client.from('ronova_puzzles')
+      .update({[key]:value,revision:previous.revision+1}).eq('word',word).eq('revision',previous.revision).select().single();
+     if(error)throw error;
+     accept(data);status.textContent='Сохранено для всех посетителей.';
+    }catch{
+     accept(rows.get(word)||previous);
+     status.textContent='Изменение не сохранено. Обнови настройки и повтори.';
+     await refresh();
+    }
+   });
+  }
+  controls.set(word,fields);host.append(details);
+ }
+ client.channel('ronova-puzzle-settings').on('postgres_changes',{event:'UPDATE',schema:'public',table:'ronova_puzzles'},event=>accept(event.new))
+  .subscribe(status=>{if(status==='SUBSCRIBED')void refresh();});
+ void refresh();setInterval(refresh,15000);
+ window.addEventListener('online',refresh);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});
+}
 </script></body></html>
