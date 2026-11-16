@@ -217,15 +217,15 @@ body:before{opacity:.25!important}
 .cipher-alphabet{display:grid;grid-template-columns:repeat(auto-fit,minmax(62px,1fr));gap:6px;margin:15px 0}
 .cipher-alphabet span{padding:7px 3px;border:1px solid #73313e;border-radius:4px;background:#240b16;text-align:center;font:15px/1.4 monospace;color:#ffe2d5}
 #ronova-second-hand{filter:drop-shadow(0 0 4px #ff2848)}
-#ronova-extra-aura{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1;background:radial-gradient(ellipse at 50% 90%,#f4183220,transparent 65%)}
+.ronova-fire{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1;background:radial-gradient(ellipse at 50% 90%,#f4183220,transparent 65%)}
 
-#ronova-extra-aura{background:linear-gradient(0deg,#b82d0b28,transparent 20%);isolation:isolate}
-#ronova-extra-aura::before,#ronova-extra-aura::after{content:"";position:absolute;left:-20%;bottom:-12vh;width:140%;height:46vh;background:radial-gradient(ellipse at 15% 80%,#acb0b145,transparent 30%),radial-gradient(ellipse at 48% 60%,#b3b7ba38,transparent 35%),radial-gradient(ellipse at 78% 80%,#d0c5bb48,transparent 32%),radial-gradient(ellipse at 60% 100%,#af41162b,transparent 50%);filter:blur(19px);animation:ronovaSmoke 16s ease-in-out infinite alternate}
-#ronova-extra-aura::after{bottom:-17vh;opacity:.7;animation-duration:23s;animation-delay:-9s;transform:scaleX(-1)}
-#ronova-extra-aura i{position:absolute;left:var(--x);bottom:-12px;width:2px;height:var(--size);background:linear-gradient(#ffdd91,#e76521 65%,transparent);border-radius:50%;box-shadow:0 0 5px #ec6e20;animation:ronovaEmber var(--duration) var(--delay) linear infinite}
+.ronova-fire{background:linear-gradient(0deg,#b82d0b28,transparent 20%);isolation:isolate}
+.ronova-fire::before,.ronova-fire::after{content:"";position:absolute;left:-20%;bottom:-12vh;width:140%;height:46vh;background:radial-gradient(ellipse at 15% 80%,#acb0b145,transparent 30%),radial-gradient(ellipse at 48% 60%,#b3b7ba38,transparent 35%),radial-gradient(ellipse at 78% 80%,#d0c5bb48,transparent 32%),radial-gradient(ellipse at 60% 100%,#af41162b,transparent 50%);filter:blur(19px);animation:ronovaSmoke 16s ease-in-out infinite alternate}
+.ronova-fire::after{bottom:-17vh;opacity:.7;animation-duration:23s;animation-delay:-9s;transform:scaleX(-1)}
+.ronova-fire i{position:absolute;left:var(--x);bottom:-12px;width:2px;height:var(--size);background:linear-gradient(#ffdd91,#e76521 65%,transparent);border-radius:50%;box-shadow:0 0 5px #ec6e20;animation:ronovaEmber var(--duration) var(--delay) linear infinite}
 @keyframes ronovaSmoke{from{translate:-3% 3%;scale:1;opacity:.45}to{translate:5% -9%;scale:1.12;opacity:.8}}
 @keyframes ronovaEmber{0%{transform:translate3d(0,0,0) rotate(-20deg);opacity:0}8%{opacity:.9}55%{opacity:.65}100%{transform:translate3d(var(--drift),-48vh,0) rotate(35deg);opacity:0}}
-@media(prefers-reduced-motion:reduce){#ronova-extra-aura i{animation:none}}
+@media(prefers-reduced-motion:reduce){.ronova-fire i{animation:none}}
 
 #timer{display:flex;align-items:center;justify-content:center;gap:clamp(3px,.7vw,7px);padding:12px 5px;background:transparent;border:0;border-radius:0;box-shadow:none;text-shadow:none!important}
 .digital-digit{display:block;position:relative;width:clamp(20px,4.8vw,37px);height:clamp(36px,8.6vw,66px)}
@@ -253,7 +253,7 @@ body:before{opacity:.25!important}
 #puzzle-controls input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:#c83952}
 #puzzle-controls select{max-width:100%;background:#260f1c;color:#fff;padding:8px;border:1px solid #934258}
 #prophecy [hidden],#puzzle [hidden]{display:none!important}
-@media(prefers-reduced-motion:reduce){.final-message,#ronova-extra-aura::before,#ronova-extra-aura::after{animation:none}}
+@media(prefers-reduced-motion:reduce){.final-message,.ronova-fire::before,.ronova-fire::after{animation:none}}
 
 .final-message{font-family:'Rubik Wet Paint',Georgia,serif;font-size:clamp(28px,4.1vw,52px);font-weight:400;line-height:1.35;color:#ff202c;text-transform:uppercase;letter-spacing:.025em;width:min(92vw,1080px);bottom:5vh;margin:0;text-shadow:0 0 8px #ff10265c,0 2px 2px #000}
 #final-pixel-eyes{height:56vh}
@@ -265,6 +265,16 @@ body:before{opacity:.25!important}
 #expired .final-message::before{content:"";position:absolute;inset:-22px -2vw;background:#0009;filter:blur(18px);z-index:-1;pointer-events:none}
 @media(max-width:600px){#expired .final-message{font-size:clamp(26px,6vw,36px);width:94vw;line-height:1.45}}
 @media(max-height:500px) and (min-width:601px){#expired .final-message{font-size:clamp(24px,3.5vw,38px);line-height:1.3}}
+
+/* Keep eyes and message in separate rows; fire fills the lower edge. */
+#expired{flex-direction:column;justify-content:center;gap:clamp(8px,2vh,22px);padding:3vh 2vw 12vh}
+#expired #final-pixel-eyes{position:relative;top:auto;left:auto;translate:none;transform:none;flex:0 1 auto;width:min(94vw,1040px);height:47vh;max-height:47vh;object-fit:contain;z-index:1}
+#expired .final-message{position:relative;top:auto;bottom:auto;left:auto;transform:none;translate:none;flex:0 0 auto;width:min(96vw,1400px);font-size:clamp(26px,3.5vw,48px);line-height:1.3;margin:0;z-index:2}
+#expired .final-message::before{display:none}
+#expired .final-fire{position:absolute;z-index:0;inset:0;background:linear-gradient(0deg,#d54a1440,transparent 30%)}
+#expired .final-fire::before,#expired .final-fire::after{height:38vh}
+@media(max-width:600px){#expired{padding-bottom:10vh;gap:12px}#expired #final-pixel-eyes{height:38vh;max-height:38vh}#expired .final-message{font-size:clamp(24px,5.7vw,34px);line-height:1.35}}
+@media(max-height:500px) and (min-width:601px){#expired{gap:6px;padding-bottom:5vh}#expired #final-pixel-eyes{height:42vh;max-height:42vh}#expired .final-message{font-size:clamp(22px,2.8vw,32px);line-height:1.2}}
 </style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap"></head><body>
 <div id="eyes" aria-hidden="true"></div>
 <main><div class="clock" id="clock" aria-label="Мистические часы"><div class="hand hour" id="hour"></div><div class="hand minute" id="minute"></div><div class="center"></div></div>
@@ -753,7 +763,7 @@ sync();setInterval(sync,250);
  }
  update();setInterval(update,50);
  const aura=document.createElement('div');
- aura.id='ronova-extra-aura';aura.setAttribute('aria-hidden','true');
+ aura.id='ronova-extra-aura';aura.className='ronova-fire';aura.setAttribute('aria-hidden','true');
  for(let i=0;i<44;i++){
   const spark=document.createElement('i');
   spark.style.setProperty('--x',(i*37%100)+'%');
@@ -764,6 +774,10 @@ sync();setInterval(sync,250);
   aura.append(spark);
  }
  document.body.prepend(aura);
+ const finalFire=aura.cloneNode(true);
+ finalFire.removeAttribute('id');
+ finalFire.classList.add('final-fire');
+ document.getElementById('expired').prepend(finalFire);
  const toggle=document.getElementById('ronova-effects');
  toggle.addEventListener('click',()=>{aura.hidden=toggle.getAttribute('aria-pressed')==='false'});
 })();
